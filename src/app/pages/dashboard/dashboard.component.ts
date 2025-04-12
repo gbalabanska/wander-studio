@@ -1,17 +1,36 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
+  animations: [
+    trigger('slideInFromTop', [
+      transition(':enter', [
+        style({ transform: 'translateY(-100%)', opacity: 0 }), // Initial state: offscreen
+        animate(
+          '0.8s cubic-bezier(0.25, 0.8, 0.25, 1)', // Smoother animation with cubic-bezier easing
+          style({ transform: 'translateY(0)', opacity: 1 })
+        ),
+      ]),
+    ]),
+  ],
   template: `
-    <div class="dashboard">
+    <div class="dashboard" [@slideInFromTop]>
       <!-- Welcome Message -->
       <div class="welcome">
         <h2>Welcome, {{ userName }}! 🌍</h2>
         <p>Plan, organize, and track your adventures with Wander Studio.</p>
-        <button class="create-trip-btn">➕ Create New Trip</button>
+        <a
+          routerLink="/new-trip"
+          routerLinkActive="active"
+          class="create-trip-btn"
+        >
+          ➕ Create New Trip
+        </a>
       </div>
 
       <!-- Month Selector -->

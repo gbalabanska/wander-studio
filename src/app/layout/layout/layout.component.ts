@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SideMenuComponent } from '../side-menu/side-menu.component';
-import { TopBarComponent } from '../top-bar/top-bar.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [SideMenuComponent, TopBarComponent, RouterOutlet],
+  imports: [SideMenuComponent, RouterOutlet],
   template: `
     <div class="layout">
       <app-side-menu></app-side-menu>
@@ -27,7 +26,7 @@ import { TopBarComponent } from '../top-bar/top-bar.component';
         flex: 1;
         display: flex;
         flex-direction: column;
-        padding-left: 250px; /* Add left padding to push content to the right */
+        padding-left: 250px;
       }
       .page-content {
         flex-grow: 1;

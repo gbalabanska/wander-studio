@@ -8,15 +8,18 @@ import { RouterModule } from '@angular/router';
   template: `
     <nav class="side-menu">
       <!-- App Name and Logo -->
-      <div class="app-header">
+      <div class="app-header lavander-bubble">
         <div class="logo">
           <img src="mountain-purple-orange-2.JPG" alt="Logo" class="app-logo" />
         </div>
         <h1 class="app-name">Wander Studio</h1>
       </div>
+      <hr
+        style="border: 0; height: 5px; background: linear-gradient(to right, #ac3457, #1e274e); margin: 20px 0;"
+      />
 
       <!-- User Profile -->
-      <div class="user-profile">
+      <div class="user-profile ">
         <img class="profile-img" src="face.jpg" alt="User" />
         <div class="user-info">
           <span class="user-name">Gabby</span>
@@ -27,6 +30,7 @@ import { RouterModule } from '@angular/router';
       <!-- Menu Items -->
       <div class="menu-items">
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/new-trip" routerLinkActive="active">New Trip</a>
         <a routerLink="/settings" routerLinkActive="active">Settings</a>
         <a routerLink="/analytics" routerLinkActive="active">Analytics</a>
       </div>
@@ -46,6 +50,12 @@ import { RouterModule } from '@angular/router';
         --brownish-yellow: #edbd8c;
       }
 
+      .lavander-bubble {
+        background-color: #e6dbdb;
+        padding-top: 5px;
+        border-radius: 25px;
+        border: 3px solid #ac3457;
+      }
       .side-menu {
         width: 220px;
         background: white;
@@ -116,6 +126,7 @@ import { RouterModule } from '@angular/router';
         border-radius: 50%;
         margin-right: 15px;
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border: 5px solid #ac3457;
       }
 
       .profile-img:hover {
@@ -176,7 +187,11 @@ import { RouterModule } from '@angular/router';
       }
 
       .logout-btn {
-        background: var(--orange-red);
+        background: linear-gradient(
+          to right,
+          var(--orange-red),
+          #e5533e
+        ); /* Gradient from orange-red to a lighter red */
         color: white;
         border: none;
         padding: 14px 20px;
@@ -191,7 +206,11 @@ import { RouterModule } from '@angular/router';
       }
 
       .logout-btn:hover {
-        background: #e5533e;
+        background: linear-gradient(
+          to right,
+          #e5533e,
+          var(--orange-red)
+        ); /* Invert the gradient on hover */
         transform: scale(1.1);
         box-shadow: 0 6px 15px rgba(255, 99, 71, 0.4);
       }

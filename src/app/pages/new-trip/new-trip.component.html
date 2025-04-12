@@ -1,0 +1,208 @@
+<div class="container" [@slideInFromTop]>
+  <h1>
+    <i class="fa-solid fa-map-location-dot"></i>Plan your next adventure with
+    WanderStudio 🎯
+  </h1>
+
+  <!-- Step 1: Trip Name -->
+  <section class="trip-section">
+    <h2>
+      <span>1.</span>
+      Trip Name 🤔
+    </h2>
+    <div
+      class="input-group"
+      style="
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      "
+    >
+      <label for="trip-name">
+        <p style="margin: 0; text-align: center">
+          Name your adventure and get started!
+        </p>
+      </label>
+      <input id="trip-name" type="text" />
+    </div>
+  </section>
+
+  <!-- Step 2: Trip Dates -->
+  <section class="trip-section">
+    <h2>2. Trip Dates 📅</h2>
+    <div class="date-group">
+      <div class="input-group">
+        <label for="start-date">
+          <i class="fa-solid fa-calendar-day"></i> From
+        </label>
+        <input id="start-date" type="date" />
+      </div>
+      <div class="input-group">
+        <label for="end-date">
+          <i class="fa-solid fa-calendar-day"></i> To
+        </label>
+        <input id="end-date" type="date" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 3: Trip Type -->
+  <section class="trip-section">
+    <h2>3. Solo or With Friends 👥</h2>
+    <div class="input-group">
+      <label>
+        <input type="checkbox" [(ngModel)]="isSolo" />
+        Solo Trip
+      </label>
+    </div>
+
+    <div *ngIf="!isSolo">
+      <h3><i class="fa-solid fa-user-group"></i> Select Friends to Invite</h3>
+      <ul class="friends-list">
+        <li *ngFor="let friend of friends">
+          <label>
+            <input type="checkbox" [value]="friend" />
+            {{ friend }}
+          </label>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Step 4: Stops -->
+  <section class="trip-section">
+    <h2>4. Add Stops 🗺️</h2>
+    <div class="map-info">
+      <p><i class="fa-solid fa-map"></i> Map Integration Coming Soon</p>
+    </div>
+  </section>
+</div>
+<style>
+  /* Container to center everything */
+  .container {
+    max-width: 800px; /* Limiting the width */
+    margin: 0 auto; /* Centering the container horizontally */
+    padding: 20px;
+    text-align: center; /* Center the text inside the container */
+    background-color: #e6dbdb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Title styling */
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #ac3457;
+  }
+
+  /* Styling for sections to keep them grouped */
+  .trip-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+  }
+
+  /* Section title styles - change to purple */
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #312f4c; /* Purple color for section titles */
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    margin-top: 15px;
+    color: #34495e;
+  }
+
+  /* Hover effect on trip-section */
+  .trip-section:hover {
+    transform: scale(1.05); /* Slightly scale up the section */
+    border: 2px solid #ac3457;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+  }
+
+  /* Wrapping input groups */
+  .input-group {
+    margin-bottom: 15px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Smaller font size and padding for input fields */
+  input[type="text"],
+  input[type="date"] {
+    padding: 6px 10px; /* Reduced padding for a more compact feel */
+    margin-top: 5px;
+    font-size: 0.9rem; /* Smaller font size */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 350px; /* Limit width to prevent too wide inputs */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  label {
+    font-size: 1rem;
+    color: #555;
+  }
+
+  /* Styling for the checkbox section */
+  .friends-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .friends-list li {
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  .friends-list input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  /* Adjust layout for date inputs */
+  .date-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .date-group .input-group {
+    flex: 1;
+  }
+
+  /* Map info section */
+  .map-info {
+    font-size: 1rem;
+    color: #7f8c8d;
+    margin-top: 10px;
+  }
+
+  /* Font awesome icons styling */
+  i {
+    margin-right: 8px;
+    color: #3498db;
+  }
+
+  /* For small screens, stack the inputs vertically */
+  @media (max-width: 600px) {
+    .date-group {
+      flex-direction: column;
+    }
+    .input-group {
+      width: 100%;
+    }
+  }
+</style>
