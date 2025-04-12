@@ -10,9 +10,9 @@ import { RouterModule } from '@angular/router';
   animations: [
     trigger('slideInFromTop', [
       transition(':enter', [
-        style({ transform: 'translateY(-100%)', opacity: 0 }), // Initial state: offscreen
+        style({ transform: 'translateY(-100%)', opacity: 0 }),
         animate(
-          '0.8s cubic-bezier(0.25, 0.8, 0.25, 1)', // Smoother animation with cubic-bezier easing
+          '0.8s cubic-bezier(0.25, 0.8, 0.25, 1)',
           style({ transform: 'translateY(0)', opacity: 1 })
         ),
       ]),
@@ -20,7 +20,6 @@ import { RouterModule } from '@angular/router';
   ],
   template: `
     <div class="dashboard" [@slideInFromTop]>
-      <!-- Welcome Message -->
       <div class="welcome">
         <h2>Welcome, {{ userName }}! 🌍</h2>
         <p>Plan, organize, and track your adventures with Wander Studio.</p>
@@ -33,7 +32,6 @@ import { RouterModule } from '@angular/router';
         </a>
       </div>
 
-      <!-- Month Selector -->
       <div class="month-selector">
         <label for="month">Select Month:</label>
         <select id="month" (change)="onMonthChange($event)">
@@ -47,7 +45,6 @@ import { RouterModule } from '@angular/router';
         </select>
       </div>
 
-      <!-- Trip Calendar -->
       <div class="calendar-section">
         <h3>Your Upcoming Trips 📅</h3>
         <div class="calendar">
@@ -61,7 +58,6 @@ import { RouterModule } from '@angular/router';
         </div>
       </div>
 
-      <!-- Friend List -->
       <div class="friend-list-section">
         <h3>Your Travel Buddies 🧑‍🤝‍🧑</h3>
         <ul class="friend-list">
@@ -87,28 +83,31 @@ import { RouterModule } from '@angular/router';
       }
 
       .dashboard {
-        max-width: 800px;
-        margin: auto;
+        max-width: 900px;
+        margin: 30px auto;
         padding: 20px;
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
+        background: #e6dbdb;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
 
       .welcome {
         text-align: center;
         background: var(--dark-purpl);
         color: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       }
 
       .create-trip-btn {
         background: var(--orange-pink);
         color: white;
         border: none;
-        padding: 12px 20px;
-        border-radius: 25px;
-        font-size: 16px;
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-size: 18px;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -116,31 +115,57 @@ import { RouterModule } from '@angular/router';
 
       .create-trip-btn:hover {
         background: var(--orange-red);
-        transform: scale(1.05);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .month-selector {
+        margin-top: 25px;
+        text-align: center;
+      }
+
+      .month-selector select {
+        padding: 10px;
+        border: 1px solid var(--dark-purpl);
+        border-radius: 8px;
+        font-size: 16px;
+        background: #fff;
+        transition: border-color 0.2s;
+      }
+
+      .month-selector select:hover {
+        border-color: var(--orange-pink);
       }
 
       .calendar-section {
-        margin-top: 30px;
+        margin-top: 40px;
         text-align: center;
       }
 
       .calendar {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 10px;
-        margin-top: 10px;
+        gap: 12px;
+        margin-top: 15px;
       }
 
       .day {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: #f4f4f4;
-        border-radius: 10px;
+        border-radius: 12px;
         font-weight: bold;
-        transition: 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+      }
+
+      .day:hover {
+        background: var(--orange-pink);
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
 
       .trip-day {
@@ -150,7 +175,7 @@ import { RouterModule } from '@angular/router';
       }
 
       .friend-list-section {
-        margin-top: 30px;
+        margin-top: 40px;
       }
 
       .friend-list {
@@ -163,42 +188,62 @@ import { RouterModule } from '@angular/router';
         justify-content: space-between;
         align-items: center;
         background: #f4f4f4;
-        padding: 10px;
-        border-radius: 10px;
-        margin-bottom: 10px;
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .friend-list li:hover {
+        background: var(--orange-pink);
+        color: white;
       }
 
       .remove-btn {
         background: var(--orange-red);
         color: white;
         border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 8px 12px;
+        border-radius: 8px;
         cursor: pointer;
+        transition: background 0.2s ease;
       }
 
       .remove-btn:hover {
         background: #e5533e;
+        transform: scale(1.05);
       }
 
       .friend-input {
-        width: calc(100% - 90px);
-        padding: 8px;
+        width: calc(100% - 100px);
+        padding: 12px;
         border: 1px solid var(--dark-purpl);
-        border-radius: 5px;
+        border-radius: 8px;
+        font-size: 16px;
+        margin-right: 10px;
+        transition: border-color 0.3s ease;
+      }
+
+      .friend-input:focus {
+        border-color: var(--orange-pink);
+        outline: none;
       }
 
       .add-friend-btn {
         background: var(--orange-pink);
         color: white;
         border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
+        padding: 10px 18px;
+        border-radius: 8px;
         cursor: pointer;
+        transition: background 0.2s ease;
       }
 
       .add-friend-btn:hover {
         background: var(--orange-red);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
     `,
   ],

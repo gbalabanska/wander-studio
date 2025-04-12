@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import {
   BrowserAnimationsModule,
+  NoopAnimationsModule,
   provideAnimations,
 } from '@angular/platform-browser/animations';
 
@@ -13,5 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     BrowserAnimationsModule,
+    NoopAnimationsModule,
   ],
 };
