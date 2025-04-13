@@ -2,11 +2,12 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TripViewComponent } from '../trip-view/trip-view.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TripViewComponent],
   animations: [
     trigger('slideInFromTop', [
       transition(':enter', [
@@ -21,7 +22,7 @@ import { RouterModule } from '@angular/router';
   template: `
     <div class="dashboard" [@slideInFromTop]>
       <div class="welcome">
-        <h2>Welcome, {{ userName }}! 🌍</h2>
+        <h2>Welcome, {{ userName }}! 👋</h2>
         <p>Plan, organize, and track your adventures with Wander Studio.</p>
         <a
           routerLink="/new-trip"
@@ -30,6 +31,7 @@ import { RouterModule } from '@angular/router';
         >
           ➕ Create New Trip
         </a>
+        <app-trip-view></app-trip-view>
       </div>
 
       <div class="month-selector">

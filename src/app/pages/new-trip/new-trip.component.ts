@@ -10,6 +10,7 @@ import {
   PlaceAutocompleteComponent,
   PlaceSearchResult,
 } from '../maps/place-autocomplete.component';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-new-trip',
@@ -22,6 +23,17 @@ import {
     MatIconModule,
     GoogleMapsModule,
     PlaceAutocompleteComponent,
+  ],
+  animations: [
+    trigger('slideInFromTop', [
+      transition(':enter', [
+        style({ transform: 'translateY(-100%)', opacity: 0 }),
+        animate(
+          '0.8s cubic-bezier(0.25, 0.8, 0.25, 1)',
+          style({ transform: 'translateY(0)', opacity: 1 })
+        ),
+      ]),
+    ]),
   ],
   templateUrl: './new-trip.component.html',
   styleUrls: ['./new-trip.component.scss'],

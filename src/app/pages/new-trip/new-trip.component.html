@@ -1,36 +1,40 @@
-<div class="container">
-  <h1>
-    <i class="fa-solid fa-map-location-dot"></i>Plan your next adventure with
-    WanderStudio 🎯
-  </h1>
+<!-- Page Header with Gradient -->
+<header class="trip-header">
+  <h1>New Trip</h1>
+  <p class="subtitle">Design the journey, not just the destination.</p>
+  <div class="header-gradient"></div>
+</header>
+<hr
+  style="
+    border: 0;
+    height: 5px;
+    background: linear-gradient(to right, #ac3457, #1e274e);
+    margin: 20px 0;
+  "
+/>
+<div class="container" [@slideInFromTop]>
+  <!-- Step 1 & 2: Trip Name + Trip Color -->
+  <section class="first-trip-section">
+    <div class="row-combined">
+      <!-- Trip Name -->
+      <div class="input-group trip-section">
+        <h2>1. Trip Name 🤔</h2>
+        <label for="trip-name">Name your adventure:</label>
+        <input id="trip-name" type="text" />
+      </div>
 
-  <!-- Step 1: Trip Name -->
-  <section class="trip-section">
-    <h2>
-      <span>1.</span>
-      Trip Name 🤔
-    </h2>
-    <div
-      class="input-group"
-      style="
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      "
-    >
-      <label for="trip-name">
-        <p style="margin: 0; text-align: center">
-          Name your adventure and get started!
-        </p>
-      </label>
-      <input id="trip-name" type="text" />
+      <!-- Trip Color -->
+      <div class="input-group trip-section">
+        <h2>2. Trip Color 🎨</h2>
+        <label for="trip-color">Pick a trip color:</label>
+        <input id="trip-color" type="color" />
+      </div>
     </div>
   </section>
 
-  <!-- Step 2: Trip Dates -->
+  <!-- Step 3: Trip Dates -->
   <section class="trip-section">
-    <h2>2. Trip Dates 📅</h2>
+    <h2>3. Trip Dates 📅</h2>
     <div class="date-group">
       <div class="input-group">
         <label for="start-date">
@@ -47,9 +51,9 @@
     </div>
   </section>
 
-  <!-- Step 3: Trip Type -->
+  <!-- Step 4: Solo or With Friends -->
   <section class="trip-section">
-    <h2>3. Solo or With Friends 👥</h2>
+    <h2>4. Solo or With Friends 👥</h2>
     <div class="input-group">
       <label>
         <input type="checkbox" [(ngModel)]="isSolo" />
@@ -70,16 +74,15 @@
     </div>
   </section>
 
-  <!-- Step 4: Stops -->
+  <!-- Step 5: Add Stops -->
   <section class="trip-section">
-    <h2>4. Add Stops 🗺️</h2>
+    <h2>5. Add Stops 🗺️</h2>
     <div class="map-info">
       <app-place-autocomplete
         (placeChanged)="onPlaceChanged($event)"
         placeholder="Enter address..."
       ></app-place-autocomplete>
 
-      <!-- Display places in a table with buttons to reorder and delete -->
       <table *ngIf="fromPlaces.length > 0">
         <thead>
           <tr>
@@ -132,48 +135,79 @@
 </div>
 
 <style>
+  .trip-header {
+    text-align: center;
+    margin-bottom: -10px;
+  }
+
+  .trip-header h1 {
+    font-size: 2.2rem;
+    background: linear-gradient(to right, #ac3457, #1e274e);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .trip-header .subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 10px 0 15px;
+    font-style: italic;
+  }
+
+  /* .header-gradient {
+    height: 6px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: linear-gradient(to right, #e77278, #ac3457, #1e274e);
+  } */
+
   /* Container to center everything */
   .container {
-    max-width: 800px; /* Limiting the width */
-    margin: 0 auto; /* Centering the container horizontally */
+    max-width: 800px;
+    margin: 0 auto;
     padding: 20px;
-    text-align: center; /* Center the text inside the container */
+    text-align: center;
     background-color: #e6dbdb;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 
-  /* Title styling */
   h1 {
     font-size: 2rem;
     margin-bottom: 20px;
     color: #ac3457;
   }
 
-  /* Styling for sections to keep them grouped */
   .trip-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+  .first-trip-section {
+    margin-bottom: 10px;
+    border-radius: 12px;
   }
 
-  /* Section title styles - change to purple */
   h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin-bottom: 10px;
-    color: #312f4c; /* Purple color for section titles */
+    color: #4b3f72;
     font-weight: 600;
   }
 
   h3 {
-    font-size: 1.2rem;
-    margin-top: 15px;
+    font-size: 1.1rem;
     color: #34495e;
+    margin-top: 15px;
   }
 
-  /* Wrapping input groups */
   .input-group {
     margin-bottom: 15px;
     text-align: left;
@@ -182,18 +216,51 @@
     align-items: flex-start;
   }
 
-  /* Smaller font size and padding for input fields */
-  input[type="text"],
+  .row-combined {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .row-combined .input-group {
+    flex: 1;
+    min-width: 220px;
+  }
+
   input[type="date"] {
-    padding: 6px 10px; /* Reduced padding for a more compact feel */
+    padding: 8px 12px;
     margin-top: 5px;
-    font-size: 0.9rem; /* Smaller font size */
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     width: 100%;
-    max-width: 350px; /* Limit width to prevent too wide inputs */
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 350px;
+  }
+
+  input[type="text"] {
+    padding: 8px 12px;
+    margin-top: 5px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  input[type="color"] {
+    margin-top: 10px;
+    height: 40px;
+    width: 80px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .hex-display {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #555;
+    font-style: italic;
   }
 
   label {
@@ -201,9 +268,8 @@
     color: #555;
   }
 
-  /* Styling for the checkbox section */
   .friends-list {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
     margin: 0;
   }
@@ -214,10 +280,9 @@
   }
 
   .friends-list input[type="checkbox"] {
-    margin-right: 10px;
+    margin-right: 8px;
   }
 
-  /* Adjust layout for date inputs */
   .date-group {
     display: flex;
     justify-content: space-between;
@@ -228,24 +293,51 @@
     flex: 1;
   }
 
-  /* Map info section */
   .map-info {
     font-size: 1rem;
     color: #7f8c8d;
     margin-top: 10px;
   }
 
-  /* Font awesome icons styling */
-  i {
-    margin-right: 8px;
-    color: #3498db;
+  table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
   }
 
-  /* For small screens, stack the inputs vertically */
+  th,
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+
+  button {
+    padding: 6px 12px;
+    margin-right: 5px;
+    background-color: #6c5ce7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+  }
+
+  .map-container {
+    margin-top: 20px;
+    text-align: left;
+  }
+
   @media (max-width: 600px) {
-    .date-group {
+    .date-group,
+    .row-combined {
       flex-direction: column;
     }
+
     .input-group {
       width: 100%;
     }

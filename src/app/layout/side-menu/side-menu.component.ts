@@ -31,8 +31,7 @@ import { RouterModule } from '@angular/router';
       <div class="menu-items">
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
         <a routerLink="/new-trip" routerLinkActive="active">New Trip</a>
-        <a routerLink="/settings" routerLinkActive="active">Settings</a>
-        <a routerLink="/analytics" routerLinkActive="active">Analytics</a>
+        <a routerLink="/settings" routerLinkActive="active">Friends</a>
       </div>
 
       <!-- Log Out Button -->
@@ -68,7 +67,7 @@ import { RouterModule } from '@angular/router';
         left: 0;
         height: 95%; /*For browser navigation menu bug fix*/
         overflow-y: auto;
-        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
+        box-shadow: 4px 0 10px rgba(231, 114, 120, 0.4);
       }
 
       .app-header {
@@ -126,7 +125,7 @@ import { RouterModule } from '@angular/router';
         border-radius: 50%;
         margin-right: 15px;
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        border: 5px solid #ac3457;
+        border: 3px solid #ac3457;
       }
 
       .profile-img:hover {
