@@ -31,7 +31,7 @@ import { RouterModule } from '@angular/router';
       <div class="menu-items">
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
         <a routerLink="/new-trip" routerLinkActive="active">New Trip</a>
-        <a routerLink="/settings" routerLinkActive="active">Friends</a>
+        <a routerLink="/friends" routerLinkActive="active">Friends</a>
       </div>
 
       <!-- Log Out Button -->

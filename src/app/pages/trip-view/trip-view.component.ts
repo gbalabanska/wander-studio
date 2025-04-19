@@ -1,151 +1,83 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-trip-view',
   standalone: true,
   imports: [CommonModule, GoogleMapsModule],
-  template: `
-    <div class="trip-card">
-      <div class="trip-header">
-        <div
-          class="trip-color"
-          style="{ 'background-color': trip.color }"
-        ></div>
-        <h2>{{ trip.name }}</h2>
-      </div>
-      <p class="trip-dates">
-        <i class="fa-solid fa-calendar-days"></i> {{ trip.startDate }} –
-        {{ trip.endDate }}
-      </p>
-      <p class="trip-mode">
-        <i class="fa-solid"></i>
-        {{ trip.isSolo ? 'Solo Trip' : 'With Friends' }}
-      </p>
-      <ul *ngIf="!trip.isSolo" class="friends">
-        <li *ngFor="let friend of trip.friends">
-          <i class="fa-solid fa-user"></i> {{ friend }}
-        </li>
-      </ul>
-
-      <div class="poi-section">
-        <h3>Points of Interest 🗺️</h3>
-        <ul class="pois">
-          <li *ngFor="let poi of trip.pointsOfInterest">
-            <i class="fa-solid fa-location-dot"></i> {{ poi }}
-          </li>
-        </ul>
-      </div>
-
-      <div class="map-placeholder">
-        <div class="map-container">
-          <h2>Map of Your Destinations</h2>
-          <google-map
-            height="400px"
-            width="100%"
-            [zoom]="zoomLevel"
-            [center]="mapCenter"
-          >
-          </google-map>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [
-    `
-      .trip-card {
-        background: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 10px rgba(231, 114, 120, 0.3);
-        margin: 20px 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-
-      .trip-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .trip-color {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        border: 2px solid #ccc;
-        box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
-      }
-
-      .trip-header h2 {
-        margin: 0;
-        color: #ac3457;
-        font-size: 1.4rem;
-      }
-
-      .trip-dates,
-      .trip-mode {
-        margin: 10px 0;
-        color: #555;
-        font-size: 0.95rem;
-      }
-
-      .friends {
-        list-style: none;
-        padding-left: 0;
-        margin: 5px 0 10px 0;
-      }
-
-      .friends li {
-        font-size: 0.9rem;
-        color: #333;
-      }
-
-      .poi-section h3 {
-        margin-top: 20px;
-        font-size: 1.1rem;
-        color: #34495e;
-      }
-
-      .pois {
-        list-style: none;
-        padding-left: 0;
-        margin: 0;
-      }
-
-      .pois li {
-        font-size: 0.9rem;
-        color: #4b3f72;
-        margin-bottom: 6px;
-      }
-
-      .map-placeholder {
-        margin-top: 20px;
-        background: #f6f6f6;
-        padding: 30px;
-        text-align: center;
-        border: 2px dashed #ccc;
-        border-radius: 10px;
-        color: #888;
-      }
-    `,
-  ],
+  templateUrl: './trip-view.component.html',
+  styleUrls: ['./trip-view.component.scss'],
 })
-export class TripViewComponent {
-  zoomLevel = 12; // Adjust initial zoom level
-  mapCenter: { lat: number; lng: number } = { lat: 42.1354, lng: 24.7453 }; // Default to Plovdiv
+export class TripViewComponent implements OnInit, OnDestroy {
+  zoomLevel = 6;
+  mapCenter: { lat: number; lng: number } = { lat: 35.6895, lng: 139.6917 }; // Tokyo
   trip = {
-    name: 'Exploring Japan 🇯🇵',
-    color: '#e77278',
+    name: 'Exploring Japan',
+    color: '#4b3f72',
     startDate: '2025-05-10',
     endDate: '2025-05-24',
     isSolo: false,
     friends: ['Alex', 'Jamie', 'Morgan'],
     pointsOfInterest: [
-      'Tokyo Tower',
-      'Kyoto Bamboo Forest',
-      'Mt. Fuji',
-      'Osaka Castle',
+      {
+        name: 'Tokyo Tower',
+        location: { lat: 35.6586, lng: 139.7454 },
+      },
+      {
+        name: 'Kyoto Bamboo Forest',
+        location: { lat: 35.0094, lng: 135.6668 },
+      },
+      {
+        name: 'Mt. Fuji',
+        location: { lat: 35.3606, lng: 138.7274 },
+      },
+      {
+        name: 'Osaka Castle',
+        location: { lat: 34.6873, lng: 135.5262 },
+      },
     ],
   };
+
+  directionsResults: google.maps.DirectionsResult | undefined;
+  private readonly destroy$ = new Subject<void>();
+
+  constructor(private mapDirectionsService: MapDirectionsService) {}
+
+  ngOnInit() {
+    if (this.trip.pointsOfInterest.length > 1) {
+      const waypoints: google.maps.DirectionsWaypoint[] =
+        this.trip.pointsOfInterest.slice(1, -1).map((poi) => ({
+          location: poi.location,
+          stopover: true, // To ensure the route goes through these points
+        }));
+
+      const request: google.maps.DirectionsRequest = {
+        origin: this.trip.pointsOfInterest[0].location,
+        destination:
+          this.trip.pointsOfInterest[this.trip.pointsOfInterest.length - 1]
+            .location,
+        waypoints: waypoints,
+        travelMode: google.maps.TravelMode.DRIVING,
+      };
+
+      this.mapDirectionsService
+        .route(request)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((response) => {
+          this.directionsResults = response.result;
+        });
+
+      this.mapCenter = this.trip.pointsOfInterest[0].location;
+    } else if (this.trip.pointsOfInterest.length === 1) {
+      this.mapCenter = this.trip.pointsOfInterest[0].location;
+      this.zoomLevel = 14; // Zoom in if only one point
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

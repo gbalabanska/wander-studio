@@ -1,1 +1,69 @@
-<p>trip-view works!</p>
+<div class="trip-card">
+  <div class="trip-container">
+    <!-- Trip Info Section (Left) -->
+    <div class="trip-info">
+      <div class="trip-header">
+        <div class="header-left">
+          <div
+            class="trip-color"
+            [ngStyle]="{ 'background-color': trip.color }"
+          ></div>
+          <h2>{{ trip.name }}</h2>
+          <p class="trip-dates">
+            <i class="fa-solid fa-calendar-days"></i>
+            <strong>{{ trip.startDate }} – {{ trip.endDate }}</strong>
+          </p>
+        </div>
+        <!-- Empty div to push buttons to the bottom -->
+        <div class="spacer"></div>
+      </div>
+
+      <section class="trip-mode-section">
+        <p class="trip-mode">
+          <i class="fa-solid"></i>
+          <strong>{{ trip.isSolo ? "Solo Trip" : "With Friends" }}</strong>
+        </p>
+        <ul *ngIf="!trip.isSolo" class="friends">
+          <li *ngFor="let friend of trip.friends">
+            <i class="fa-solid fa-user"></i> {{ friend }}
+          </li>
+        </ul>
+      </section>
+
+      <section class="poi-section">
+        <h3>Points of Interest</h3>
+        <ul class="pois">
+          <li *ngFor="let poi of trip.pointsOfInterest; let i = index">
+            <strong>A.</strong> {{ poi.name }}
+          </li>
+        </ul>
+      </section>
+
+      <!-- Buttons moved back down -->
+      <section class="buttons">
+        <button class="btn-update">Update</button>
+        <button class="btn-delete">Delete</button>
+      </section>
+    </div>
+
+    <!-- Map Section (Right) -->
+    <div class="map-container">
+      <google-map
+        height="400px"
+        width="100%"
+        [zoom]="zoomLevel"
+        [center]="mapCenter"
+      >
+        <map-marker
+          *ngFor="let poi of trip.pointsOfInterest"
+          [position]="poi.location"
+          [title]="poi.name"
+        ></map-marker>
+        <map-directions-renderer
+          *ngIf="directionsResults"
+          [directions]="directionsResults"
+        ></map-directions-renderer>
+      </google-map>
+    </div>
+  </div>
+</div>
