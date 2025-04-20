@@ -1,0 +1,45 @@
+<div class="signup-wrapper">
+  <div class="signup-header">
+    <h2>✨ Create Your Chat-Mat Account</h2>
+  </div>
+  <div class="signup-form-container">
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">👤 Username:</label>
+        <input
+          id="username"
+          [(ngModel)]="user.username"
+          name="username"
+          required
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">📧 Email:</label>
+        <input
+          id="email"
+          [(ngModel)]="user.email"
+          name="email"
+          type="email"
+          required
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">🔒 Password:</label>
+        <input
+          id="password"
+          [(ngModel)]="user.password"
+          name="password"
+          type="password"
+          required
+          class="form-control"
+        />
+      </div>
+
+      <button type="submit" class="btn-signup">🚀 Sign Up</button>
+    </form>
+  </div>
+</div>
