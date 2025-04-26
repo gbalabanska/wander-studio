@@ -49,6 +49,7 @@ export class AuthService {
       .pipe(
         tap(() => {
           this.usernameSubject.next(null);
+          sessionStorage.clear();
         })
       );
   }

@@ -11,6 +11,7 @@
     border-radius: 25px;
     border: 3px solid #ac3457;
   }
+
   .side-menu {
     width: 220px;
     background: white;
@@ -21,7 +22,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    height: 95%; /*For browser navigation menu bug fix*/
+    height: 97%; /*For browser navigation menu bug fix*/
     overflow-y: auto;
     box-shadow: 4px 0 10px rgba(231, 114, 120, 0.4);
   }

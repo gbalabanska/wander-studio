@@ -53,6 +53,32 @@
   <section class="trip-section">
     <!-- TODO: make the table scrollable -->
     <h2>Friends List 📋</h2>
+
+    <!-- Paging Controls -->
+    <div class="pagination-controls">
+      <button (click)="prevPage()" [disabled]="pageNumber === 0">
+        ⬅️ Prev
+      </button>
+      <span>Page {{ pageNumber + 1 }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="pageNumber + 1 >= totalPages">
+        Next ➡️
+      </button>
+
+      <!-- Input for jumping to specific page -->
+      <div>
+        <label for="pageInput" class="sr-only">Go to page:</label>
+        <input
+          id="pageInput"
+          type="number"
+          [(ngModel)]="pageInput"
+          [min]="1"
+          [max]="totalPages"
+          (blur)="jumpToPage()"
+          [attr.max]="totalPages"
+        />
+      </div>
+    </div>
+
     <table>
       <thead>
         <tr>

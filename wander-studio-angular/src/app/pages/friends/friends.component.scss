@@ -226,4 +226,60 @@
     .add-btn {
       width: 100%;
     }
+
+    
   }
+  .pagination-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .pagination-controls button {
+    padding: 6px 12px;
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .pagination-controls button:disabled {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+  }
+  
+  .pagination-controls button:hover:not(:disabled) {
+    background-color: #ddd;
+  }
+  
+  .pagination-controls span {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .pagination-controls input {
+    width: 60px;
+    padding: 6px;
+    text-align: center;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+  }
+  
+  .pagination-controls input:focus {
+    border-color: #ac3457;
+  }
+  
+  .pagination-controls div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  

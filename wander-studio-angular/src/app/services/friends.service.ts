@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/reponse/api-response.model'; // Path to your ApiResponse model
 import { environment } from '../environment/environment';
-import { Friend, User } from '../../models/dto/dtos';
+import { Friend, PagedResponse, User } from '../../models/dto/dtos';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +17,9 @@ export class FriendService {
 
   //----------------------------ADD FRIEND TO CHANNEL
   // Get friend list for a specific user
-  getFriendList(): Observable<ApiResponse<Friend[]>> {
-    return this.http.get<ApiResponse<Friend[]>>(this.friendsUrl, {
+  getFriendList(page: number = 0, size: number = 5) {
+    const url = `${this.friendsUrl}?page=${page}&size=${size}`;
+    return this.http.get<ApiResponse<PagedResponse<Friend>>>(url, {
       withCredentials: true,
     });
   }

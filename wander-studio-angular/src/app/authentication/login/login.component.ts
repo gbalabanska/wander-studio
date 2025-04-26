@@ -27,15 +27,21 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      username: ['w', [Validators.required]],
-      password: ['w', [Validators.required]],
+      username: ['Gabby Balabanska', [Validators.required]],
+      password: ['1', [Validators.required]],
     });
   }
 
   ngOnInit(): void {
     console.log('Login component initialized');
-    this.authService.logout(); // Log out the user when the page loads
-    console.log('User logged out');
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('User logged out');
+      },
+      error: (err) => {
+        console.error('Logout failed:', err);
+      },
+    });
   }
 
   onSubmit() {

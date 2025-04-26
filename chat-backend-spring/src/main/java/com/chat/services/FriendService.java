@@ -6,6 +6,8 @@ import com.chat.entities.UserFriend;
 import com.chat.repositories.UserFriendRepository;
 import com.chat.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,26 +23,30 @@ public class FriendService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Friend> getFriendList(int userId) {
-        List<UserFriend> friendships = userFriendRepository.findByUserIdOrFriendId(userId, userId);
-        List<Friend> friends = new ArrayList<>();
 
-        for (UserFriend friendship : friendships) {
-            int friendId = (friendship.getUserId() == userId) ? friendship.getFriendId() : friendship.getUserId();
-            Optional<User> friendUserOpt = userRepository.findById(friendId);
-
-            friendUserOpt.ifPresent(friendUser -> {
-                friends.add(new Friend(
-                        friendUser.getId(),
-                        friendUser.getUsername(),
-                        friendUser.getGender(),
-                        friendUser.getEmail()
-                ));
-            });
-        }
-
-        return friends;
+    public Page<Friend> getPagedFriendList(int userId, Pageable pageable) {
+        return userFriendRepository.findPagedFriendsByUserId(userId, pageable);
     }
+//    public List<Friend> getFriendList(int userId) {
+//        List<UserFriend> friendships = userFriendRepository.findByUserIdOrFriendId(userId, userId);
+//        List<Friend> friends = new ArrayList<>();
+//
+//        for (UserFriend friendship : friendships) {
+//            int friendId = (friendship.getUserId() == userId) ? friendship.getFriendId() : friendship.getUserId();
+//            Optional<User> friendUserOpt = userRepository.findById(friendId);
+//
+//            friendUserOpt.ifPresent(friendUser -> {
+//                friends.add(new Friend(
+//                        friendUser.getId(),
+//                        friendUser.getUsername(),
+//                        friendUser.getGender(),
+//                        friendUser.getEmail()
+//                ));
+//            });
+//        }
+//
+//        return friends;
+//    }
 
     public boolean removeFriend(int userId, int friendId) {
         // Check for friendship

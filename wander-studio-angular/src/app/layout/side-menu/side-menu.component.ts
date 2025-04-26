@@ -40,10 +40,8 @@ import { RouterModule } from '@angular/router';
         <a routerLink="/layout/friends" routerLinkActive="active">Friends</a>
       </div>
 
-      <!-- Log Out Button -->
       <div class="bottom-content">
         <button class="logout-btn" (click)="logout()">Log Out 👋</button>
-        <!-- ADD (click) here -->
       </div>
     </nav>
   `,
@@ -62,7 +60,7 @@ export class SideMenuComponent implements OnInit {
     this.authService.logout().subscribe({
       next: () => {
         // Clear session storage if you want (optional)
-        sessionStorage.clear();
+
         // Navigate to login or home page
         this.router.navigate(['/login']);
       },

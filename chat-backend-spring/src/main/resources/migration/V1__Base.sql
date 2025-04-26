@@ -24,9 +24,10 @@ CREATE TABLE `user_friend` (
 ALTER TABLE user AUTO_INCREMENT = 1;
 ALTER TABLE user_friend AUTO_INCREMENT = 1;
 
---decrypted password: 1
+-- decrypted password: 1
 INSERT INTO `user` (`username`, `email`, `gender`, `password`, `roles`) VALUES
-('alice', 'alice@example.com', 'F', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_USER'),
-('bob', 'bob@example.com', 'M', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_USER'),
-('charlie', 'charlie@example.com', 'M', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_ADMIN'),
-('diana', 'diana@example.com', 'F', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_USER');
+('Gabby Balabanska', 'gabby@example.com', 'F', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_USER'),
+('alice99', 'alice.johnson@example.com', 'F', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_USER'),
+('bob77', 'robert.miller@example.com', 'M', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_USER'),
+('chaz88', 'charles.anderson@example.com', 'M', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_ADMIN'),
+('didi21', 'diana.evans@example.com', 'F', '$2a$10$owZ6ydjUfbVP4GXbyCJwg.ULxnGLvWf.FMAoKf9DXimiaGzb6SvrS', 'ROLE_USER');

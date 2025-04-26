@@ -34,19 +34,6 @@ export class FriendsComponent implements OnInit {
     this.loadFriends(); // Load friends on component initialization
   }
 
-  // Load friend list
-  loadFriends() {
-    this.friendService.getFriendList().subscribe({
-      next: (res) => {
-        this.friends = res.data || [];
-        console.log('Loaded friends:', this.friends);
-      },
-      error: (err) => {
-        console.error('Failed to load friends', err);
-      },
-    });
-  }
-
   // Search for a user
   searchUser() {
     if (!this.searchUsername.trim()) return;
@@ -101,5 +88,55 @@ export class FriendsComponent implements OnInit {
         },
       });
     }
+  }
+
+  // Paging variables
+  pageNumber: number = 0;
+  totalPages: number = 0;
+
+  loadFriends() {
+    this.friendService.getFriendList(this.pageNumber, 5).subscribe({
+      next: (res) => {
+        if (res.data) {
+          this.friends = res.data.content;
+          this.totalPages = res.data.totalPages; // ← ADD THIS
+        } else {
+          this.friends = [];
+          this.totalPages = 0;
+        }
+        console.log('Loaded friends:', this.friends);
+      },
+      error: (err) => {
+        console.error('Failed to load friends', err);
+      },
+    });
+  }
+
+  nextPage() {
+    if (this.pageNumber + 1 < this.totalPages) {
+      this.pageNumber++;
+      this.loadFriends();
+    }
+  }
+
+  prevPage() {
+    if (this.pageNumber > 0) {
+      this.pageNumber--;
+      this.loadFriends();
+    }
+  }
+
+  pageInput: number = 1; // User input for page number
+
+  // Other existing methods...
+
+  jumpToPage() {
+    // If the input is invalid (greater than totalPages), reset to page 1
+    if (this.pageInput < 1 || this.pageInput > this.totalPages) {
+      this.pageInput = 1;
+    }
+
+    this.pageNumber = this.pageInput - 1; // Convert to zero-based index
+    this.loadFriends(); // Load the friends of the chosen page
   }
 }
