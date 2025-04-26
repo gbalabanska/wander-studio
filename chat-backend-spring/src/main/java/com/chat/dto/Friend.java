@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddNewUserRequest {
-
+public class Friend {
+    private int id;
     private String username;
+    private String gender;
     private String email;
-    private String password;
-    private String gender; //M, F, O
 }

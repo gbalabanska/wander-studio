@@ -1,7 +1,5 @@
-package com.chat.entities;
+package com.chat.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,11 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class UserDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +18,4 @@ public class User {
     private String username;
     private String gender;
     private String email;
-    @JsonIgnore
-    private String password;
-    @JsonIgnore
-    private String roles;
-
 }

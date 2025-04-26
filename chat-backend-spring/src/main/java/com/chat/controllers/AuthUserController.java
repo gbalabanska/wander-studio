@@ -1,6 +1,7 @@
 package com.chat.controllers;
 
 import com.chat.dto.AddNewUserRequest;
+import com.chat.dto.ApiResponse;
 import com.chat.dto.AuthRequest;
 import com.chat.entities.User;
 import com.chat.services.JwtService;
@@ -72,6 +73,8 @@ public class AuthUserController {
         // Form new user from DTO
         User newUser = new User();
         newUser.setUsername(newUserDTO.getUsername());
+        newUser.setEmail(newUserDTO.getEmail());
+        newUser.setGender(newUserDTO.getGender());
         newUser.setPassword(newUserDTO.getPassword());
         newUser.setRoles("ROLE_USER");
 
@@ -113,5 +116,20 @@ public class AuthUserController {
             throw new UsernameNotFoundException("Invalid user request!");
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletResponse response) {
+        // Create a cookie with the same name as the JWT cookie
+        Cookie cookie = new Cookie("token", null); // Set value to null to clear it
+        cookie.setHttpOnly(true);                  // Ensure HttpOnly is set
+        cookie.setSecure(true);                    // Ensure Secure is set
+        cookie.setPath("/");                       // Match the original path
+        cookie.setMaxAge(0);                       // Set cookie to expire immediately
+        response.addCookie(cookie);                // Add the expired cookie to the response
+
+        ApiResponse<String> apiResponse = new ApiResponse<>("You have been logged out successfully.");
+        return ResponseEntity.ok(apiResponse);
+    }
+
 
 }

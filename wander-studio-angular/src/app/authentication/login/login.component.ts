@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../service/auth.service';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,7 @@ import { AuthService } from '../service/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
   constructor(
@@ -29,6 +30,12 @@ export class LoginComponent {
       username: ['w', [Validators.required]],
       password: ['w', [Validators.required]],
     });
+  }
+
+  ngOnInit(): void {
+    console.log('Login component initialized');
+    this.authService.logout(); // Log out the user when the page loads
+    console.log('User logged out');
   }
 
   onSubmit() {
@@ -47,4 +54,10 @@ export class LoginComponent {
       });
     }
   }
+
+  /*
+  TODO:
+  - protect pages from unauthenticated users
+  - proper log out and cookie deletion
+  */
 }

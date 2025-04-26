@@ -18,7 +18,7 @@ public class UserFriend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int userId; // Reference to User ID
+    private int userId; // Reference to User ID who initiated friendship
 
-    private int friendId; // Reference to Friend User ID
+    private int friendId; // Reference to Friend User ID - befriended part
 }

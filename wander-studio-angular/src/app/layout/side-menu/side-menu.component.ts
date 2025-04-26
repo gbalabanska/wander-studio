@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router'; // <-- ADD THIS
 import { Observable } from 'rxjs';
 import { AuthService } from '../../authentication/service/auth.service';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-side-menu',
@@ -22,7 +23,7 @@ import { CommonModule } from '@angular/common';
       />
 
       <!-- User Profile -->
-      <div class="user-profile ">
+      <div class="user-profile">
         <img class="profile-img" src="face.jpg" alt="User" />
         <div class="user-info">
           <span class="user-name">{{ username$ | async }}</span>
@@ -41,18 +42,33 @@ import { CommonModule } from '@angular/common';
 
       <!-- Log Out Button -->
       <div class="bottom-content">
-        <button class="logout-btn">Log Out 👋</button>
+        <button class="logout-btn" (click)="logout()">Log Out 👋</button>
+        <!-- ADD (click) here -->
       </div>
     </nav>
   `,
   styleUrls: ['./side-menu.component.scss'],
 })
 export class SideMenuComponent implements OnInit {
-  username$: Observable<string | null>;
+  username$!: Observable<string | null>;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
     this.username$ = this.authService.username$;
   }
 
-  ngOnInit(): void {}
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        // Clear session storage if you want (optional)
+        sessionStorage.clear();
+        // Navigate to login or home page
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Logout failed:', error);
+      },
+    });
+  }
 }

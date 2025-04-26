@@ -1,5 +1,6 @@
 package com.chat.services;
 
+import com.chat.dto.UserDTO;
 import com.chat.entities.User;
 import com.chat.entities.UserFriend;
 import com.chat.repositories.UserFriendRepository;
@@ -18,9 +19,9 @@ public class UserService {
     @Autowired
     private UserFriendRepository userFriendRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+//    public List<UserDTO> getAllUsers() {
+//        return userRepository.findAll();
+//    }
 
     // Method to add a friend
     public boolean addFriend(int userId, int friendId) {
@@ -48,4 +49,15 @@ public class UserService {
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    public Optional<UserDTO> getUserDTOByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(user -> new UserDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getGender(),
+                        user.getEmail()
+                ));
+    }
+
 }
