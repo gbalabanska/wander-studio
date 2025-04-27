@@ -1,4 +1,3 @@
-// routes.ts or app-routing.module.ts
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { NewTripComponent } from './pages/new-trip/new-trip.component';
 import { FriendsComponent } from './pages/friends/friends.component';
@@ -6,6 +5,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './authentication/login/login.component';
 import { SignupComponent } from './authentication/signup/signup.component';
 import { LayoutComponent } from './layout/layout/layout.component';
+import { AuthGuard } from './authentication/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -17,6 +17,7 @@ export const routes: Routes = [
   {
     path: 'layout',
     component: LayoutComponent,
+    canActivate: [AuthGuard], // <--- add the guard here
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'friends', component: FriendsComponent },

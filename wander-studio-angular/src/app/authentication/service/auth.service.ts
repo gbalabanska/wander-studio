@@ -8,15 +8,25 @@ import { environment } from '../../environment/environment';
 })
 export class AuthService {
   private baseUrl = environment.apiUrl + '/auth';
-  private usernameSubject = new BehaviorSubject<string | null>(null);
-  username$ = this.usernameSubject.asObservable();
+  private usernameSubject: BehaviorSubject<string | null>;
+  username$: Observable<string | null>;
+
+  constructor(private http: HttpClient) {
+    const storedUsername = sessionStorage.getItem('username');
+    this.usernameSubject = new BehaviorSubject<string | null>(storedUsername);
+    this.username$ = this.usernameSubject.asObservable();
+    console.log('AuthService initialized');
+  }
 
   setUsername(username: string | null): void {
+    if (username) {
+      sessionStorage.setItem('username', username);
+    } else {
+      sessionStorage.removeItem('username');
+    }
     this.usernameSubject.next(username);
   }
-  constructor(private http: HttpClient) {}
 
-  // Register new user
   signup(user: {
     username: string;
     password: string;
@@ -28,7 +38,6 @@ export class AuthService {
     });
   }
 
-  // Method to send the login request
   login(username: string, password: string): Observable<any> {
     return this.http
       .post(
@@ -38,7 +47,8 @@ export class AuthService {
       )
       .pipe(
         tap(() => {
-          this.usernameSubject.next(username);
+          console.log(`User ${username} logged in successfully.`);
+          this.setUsername(username); // <== use setUsername() instead
         })
       );
   }
@@ -48,22 +58,10 @@ export class AuthService {
       .post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
-          this.usernameSubject.next(null);
+          this.setUsername(null); // <== clear username properly
           sessionStorage.clear();
+          console.log('User logged out successfully.');
         })
       );
-  }
-
-  // Get the current user's id and username
-  getCurrentUser(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/currentUser`, {
-      withCredentials: true,
-    });
-  }
-
-  // Save user info in sessionStorage
-  saveUserInfo(userId: number, username: string): void {
-    sessionStorage.setItem('userId', userId.toString());
-    sessionStorage.setItem('username', username);
   }
 }
