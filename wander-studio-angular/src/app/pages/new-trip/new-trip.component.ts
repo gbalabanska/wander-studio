@@ -14,6 +14,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { FriendService } from '../../services/friends.service';
 import { Friend } from '../../../models/dto/dtos';
 import { EMOJI_OPTIONS, EmojiOption } from '../../shared/emoji-list';
+import { MenuHeaderComponent } from '../../layout/menu-header/menu-header.component';
 
 @Component({
   selector: 'app-new-trip',
@@ -26,6 +27,7 @@ import { EMOJI_OPTIONS, EmojiOption } from '../../shared/emoji-list';
     MatIconModule,
     GoogleMapsModule,
     PlaceAutocompleteComponent,
+    MenuHeaderComponent,
   ],
   animations: [
     trigger('slideInFromTop', [

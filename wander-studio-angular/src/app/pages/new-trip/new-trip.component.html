@@ -1,43 +1,43 @@
-<!-- Page Header with Gradient -->
-<header class="trip-header">
-  <h1>Create a New Trip</h1>
-  <p class="subtitle">Plan the journey, share the adventure.</p>
-  <div class="header-gradient"></div>
-</header>
-
-<hr
-  style="
-    border: 0;
-    height: 5px;
-    background: linear-gradient(to right, #ac3457, #1e274e);
-    margin: 20px 0;
-  "
-/>
+<app-menu-header
+  [header]="'Create a New Trip'"
+  [subtitle]="'Plan the journey, share the adventure.'"
+></app-menu-header>
 
 <div class="container" [@slideInFromTop]>
   <section class="first-trip-section">
     <div class="row-combined">
       <div class="input-group trip-section">
-        <h2>1. Trip Name 📝</h2>
-        <label for="trip-name">What should we call your trip?</label>
-        <input
-          id="trip-name"
-          type="text"
-          placeholder="e.g., Euro Summer 2025"
-        />
+        <div class="section-header">
+          <h2>I. Trip Name</h2>
+          <span class="section-emoji">📝</span>
+        </div>
+        <label for="trip-name" class="step-description"
+          >What should we call your trip?</label
+        >
+        <div class="field-row">
+          <div class="field-group">
+            <label for="trip-name">e.g., Euro Summer 2025</label>
+            <input id="trip-name" type="text" class="input-trip-name" />
+          </div>
+        </div>
       </div>
 
       <div class="input-group trip-section">
-        <h2>2. Travel Dates 📅</h2>
-        <label for="start-date">When will the trip happen?</label>
+        <div class="section-header">
+          <h2>II. Travel Dates</h2>
 
-        <div class="date-inputs">
-          <div>
+          <span class="section-emoji">📅</span>
+        </div>
+        <label for="start-date" class="step-description"
+          >When will the trip happen?</label
+        >
+        <div class="field-row">
+          <div class="field-group">
             <label for="start-date">Start Date</label>
             <input id="start-date" type="date" />
           </div>
 
-          <div>
+          <div class="field-group">
             <label for="end-date">End Date</label>
             <input id="end-date" type="date" />
           </div>
@@ -45,9 +45,11 @@
       </div>
 
       <div class="input-group trip-section">
-        <h2 class="section-title">3. Trip Emoji 🎨</h2>
-
-        <label for="trip-emoji" class="emoji-label-text">
+        <div class="section-header">
+          <h2>III. Trip Emoji</h2>
+          <span class="section-emoji">🎨</span>
+        </div>
+        <label for="trip-emoji" class="step-description">
           Choose an emoji that captures the vibe:
         </label>
         <div class="emoji-picker">
@@ -83,7 +85,11 @@
   <section class="first-trip-section">
     <div class="row-combined">
       <div class="input-group trip-section">
-        <h2>4. Invite Friends 👥</h2>
+        <div class="section-header">
+          <h2>IV. Invite Friends</h2>
+          <span class="section-emoji">👥</span>
+        </div>
+
         <div class="pagination-controls">
           <button (click)="prevPage()" [disabled]="pageNumber === 0">
             ⬅️ Prev
@@ -96,7 +102,7 @@
             Next ➡️
           </button>
           <div>
-            <label for="pageInput" class="sr-only">Go to page:</label>
+            <label for="pageInput">Go to page:</label>
             <input
               id="pageInput"
               type="number"
@@ -109,20 +115,18 @@
           </div>
         </div>
 
+        <!-- Friends Table -->
         <table class="friends-table">
           <thead>
             <tr>
-              <th class="actions-header"><input type="checkbox" /> Invite</th>
-              <th>🖼️</th>
+              <th>🖼️ Avatar</th>
               <th>👤 Username</th>
-              <th class="email-header">📧 Email</th>
+              <th>👤 Email</th>
+              <th>Invite</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let friend of friends">
-              <td class="actions-cell">
-                <input type="checkbox" [value]="friend.id" />
-              </td>
               <td>
                 <img
                   [src]="friend.gender === 'M' ? 'm.png' : 'w.png'"
@@ -133,93 +137,21 @@
                 />
               </td>
               <td>{{ friend.username }}</td>
-              <td class="email-cell">{{ friend.email }}</td>
+              <td>{{ friend.email }}</td>
+              <td>
+                <input type="checkbox" [value]="friend.id" />
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <style>
-        /* Existing styles ... */
-
-        /* Cool and Compact Friends Table Styling */
-        .friends-table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 15px;
-          font-size: 0.9rem; /* Slightly smaller font for compactness */
-        }
-
-        .friends-table th,
-        .friends-table td {
-          padding: 8px 10px; /* Reduced padding for compactness, but still breathable */
-          border-bottom: 1px solid #eee; /* Light grey subtle border */
-          text-align: left;
-          white-space: nowrap; /* Prevent text wrapping for single-line display */
-          overflow: hidden; /* Hide overflowing text */
-          text-overflow: ellipsis; /* Indicate overflow with an ellipsis */
-        }
-
-        .friends-table th {
-          background-color: #f8f8f8; /* Light background for header */
-          color: #555;
-          font-weight: bold;
-        }
-
-        .friends-table tbody tr:nth-child(even) {
-          background-color: #f2f2f2; /* Slightly different background for even rows */
-        }
-
-        .friends-table tbody tr:hover {
-          background-color: #e0f7fa; /* Subtle hover effect */
-          transition: background-color 0.3s ease;
-        }
-
-        .avatar {
-          border-radius: 50%; /* Circular avatars for a cool look */
-          vertical-align: middle; /* Align avatar with text */
-          margin-right: 8px;
-        }
-
-        /* Actions Header and Cell */
-        .actions-header {
-          width: 80px; /* Adjust width as needed */
-          text-align: center;
-        }
-
-        .actions-cell {
-          text-align: center;
-        }
-
-        .actions-header input[type="checkbox"],
-        .actions-cell input[type="checkbox"] {
-          margin-right: 5px;
-          vertical-align: middle;
-        }
-
-        /* Adjust column widths for compactness */
-        .email-header,
-        .email-cell {
-          width: 40%; /* Allow more space for potentially longer emails */
-        }
-
-        .friends-table th:nth-child(2), /* Avatar header */
-        .friends-table td:nth-child(2) {
-          /* Avatar cell */
-          width: 40px; /* Fixed width for avatar column */
-          text-align: center;
-        }
-
-        .friends-table th:nth-child(3), /* Username header */
-        .friends-table td:nth-child(3) {
-          /* Username cell */
-          width: 30%; /* Allocate remaining space for username */
-        }
-      </style>
-
       <div class="input-group trip-section">
-        <h2>5. Trip Notes 📝</h2>
-        <label for="trip-notes"
+        <div class="section-header">
+          <h2>V. Trip Notes</h2>
+          <span class="section-emoji">📝</span>
+        </div>
+        <label for="trip-notes" class="step-description"
           >Add ideas, links, or a short description:</label
         >
         <textarea id="trip-notes" placeholder="Optional notes..."></textarea>
@@ -228,7 +160,10 @@
   </section>
 
   <section class="trip-section">
-    <h2>6. Add Stops 🗺️</h2>
+    <div class="section-header">
+      <h2>VI. Add Stops</h2>
+      <span class="section-emoji">🗺️</span>
+    </div>
     <div class="map-info">
       <app-place-autocomplete
         (placeChanged)="onPlaceChanged($event)"
@@ -297,22 +232,47 @@
 </div>
 
 <style>
-  /* General Styling */
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 
-  body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  .container {
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #e6dbdb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
-  .date-inputs {
+
+  .input-trip-name {
+    min-width: 445px;
+  }
+
+  .trip-section {
+    position: relative;
+  }
+
+  .step-description {
+    margin-bottom: 10px;
+  }
+
+  .section-header {
     display: flex;
-    gap: 20px;
-    margin-top: 10px;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
   }
+
+  .section-emoji {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 1.5rem;
+  }
+
   .input-group.trip-section textarea {
     resize: vertical;
     width: 100%;
@@ -324,41 +284,6 @@
     border-radius: 6px;
     overflow: auto;
     box-sizing: border-box;
-  }
-  .date-inputs > div {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Header Styling */
-  .trip-header {
-    text-align: center;
-    margin-bottom: -10px;
-  }
-
-  .trip-header h1 {
-    font-size: 2.2rem;
-    background: linear-gradient(to right, #ac3457, #1e274e);
-    -webkit-background-clip: text;
-    color: transparent;
-    font-weight: 700;
-  }
-
-  .trip-header .subtitle {
-    font-size: 1.1rem;
-    color: #666;
-    margin: 10px 0 15px;
-    font-style: italic;
-  }
-
-  /* Container */
-  .container {
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #e6dbdb;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
   }
 
   /* Section Styles */
@@ -388,104 +313,6 @@
     border-radius: 12px;
   }
 
-  /* Layout Helpers */
-  .row-combined {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-
-  .row-combined .input-group {
-    flex: 1;
-    min-width: 220px;
-  }
-
-  .input-group {
-    margin-bottom: 15px;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Inputs */
-  input[type="text"],
-  input[type="date"] {
-    padding: 8px 12px;
-    margin-top: 5px;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 100%;
-    max-width: 300px;
-  }
-
-  input[type="color"] {
-    margin-top: 10px;
-    height: 40px;
-    width: 80px;
-    border: none;
-    cursor: pointer;
-  }
-
-  label {
-    font-size: 1rem;
-    color: #555;
-  }
-
-  button {
-    padding: 6px 12px;
-    margin-right: 5px;
-    background-color: #6c5ce7;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  button:disabled {
-    background-color: #bbb;
-    cursor: not-allowed;
-  }
-
-  /* Table */
-  table {
-    width: 100%;
-    margin-top: 15px;
-    border-collapse: collapse;
-  }
-
-  th,
-  td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-  }
-
-  /* Map Styling */
-  .map-container {
-    margin-top: 20px;
-  }
-
-  .stops-row {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-
-  .stops-table {
-    flex: 1;
-    min-width: 280px;
-  }
-
-  .map-container {
-    flex: 2;
-    min-width: 300px;
-  }
-
-  /* Existing styles remain */
-
-  /* Emoji Picker Styling - Updated */
   .emoji-picker {
     display: flex;
     align-items: flex-start;
@@ -493,7 +320,6 @@
     flex-wrap: wrap;
   }
 
-  /* Wrapper around the emoji button and grid */
   .emoji-picker-wrapper {
     position: relative;
     display: flex;
@@ -501,7 +327,6 @@
     align-items: center;
   }
 
-  /* Emoji Button (Trigger) */
   .emoji-button.selected-display {
     display: flex;
     flex-direction: column;
@@ -509,15 +334,14 @@
     justify-content: center;
     padding: 8px 12px;
     font-size: 1.2rem;
-    background-color: #f4f4f4; /* Greish background */
+    background-color: #f4f4f4;
     border: 1px solid #ccc;
     border-radius: 10px;
     cursor: pointer;
     width: 110px;
-    margin-top: 10px; /* Space between label and button */
+    margin-top: 10px;
   }
 
-  /* Emoji Grid Popup */
   .emoji-grid-popup {
     position: absolute;
     top: 100%; /* Position below the trigger button */
@@ -535,12 +359,10 @@
     min-width: 240px; /* Minimum width for the grid */
   }
 
-  /* Show the popup on hover */
   .emoji-picker-wrapper:hover .emoji-grid-popup {
     display: grid;
   }
 
-  /* Styling for each emoji button in the grid */
   .emoji-grid-popup .emoji-button {
     padding: 10px;
     font-size: 1.5rem;
@@ -579,6 +401,226 @@
     color: #555;
     text-align: center;
   }
+
+  /* Layout Helpers */
+  .row-combined {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .row-combined .input-group {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Inputs */
+  input[type="text"],
+  input[type="date"] {
+    padding: 8px 12px;
+    margin-top: 5px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+    /* max-width removed to allow full expansion */
+  }
+
+  input[type="color"] {
+    margin-top: 10px;
+    height: 40px;
+    width: 80px;
+    border: none;
+    cursor: pointer;
+  }
+
+  label {
+    font-size: 1rem;
+    color: #555;
+  }
+
+  button {
+    padding: 6px 12px;
+    margin-right: 5px;
+    background-color: #6c5ce7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 6rem;
+    align-items: flex-start;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Pagination Controls */
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .pagination-controls button {
+    padding: 6px 12px;
+    background-color: #6c5ce7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .pagination-controls button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+  }
+
+  .pagination-controls input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  /* Friends Table */
+  .friends-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    table-layout: auto;
+  }
+
+  .friends-table th {
+    background-color: #f8f8f8;
+    color: #555;
+    font-weight: bold;
+  }
+
+  .friends-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  .friends-table tbody tr:hover {
+    background-color: #e0f7fa;
+    transition: background-color 0.3s ease;
+  }
+
+  .avatar {
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+  /* Center the content of the Avatar column */
+  .friends-table th:nth-child(1), /* Target the first TH (Avatar) */
+.friends-table td:nth-child(1) {
+    /* Target the first TD (Avatar) */
+    text-align: center;
+    width: 120px; /* Fixed width for the icon */
+  }
+
+  /* Center the content of the Invite column */
+  .friends-table th:nth-child(4), /* Target the fourth TH (Invite) */
+.friends-table td:nth-child(4) {
+    /* Target the fourth TD (Invite) */
+    text-align: center;
+    width: 80px; /* Fixed width for the checkbox */
+  }
+  /* Actions Header and Cell */
+  .actions-header {
+    width: 80px;
+    text-align: center;
+  }
+
+  .actions-cell {
+    text-align: center;
+  }
+
+  .actions-header input[type="checkbox"],
+  .actions-cell input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  /* Remove Email Header and Cell */
+  .email-header,
+  .email-cell {
+    display: none; /* Hide email column */
+  }
+
+  /* Layout Helpers */
+  .row-combined {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .row-combined .input-group {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+  }
+
+  /* Map Styling */
+  .map-container {
+    margin-top: 20px;
+  }
+
+  .stops-row {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stops-table {
+    flex: 1;
+    min-width: 280px;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .map-container {
+    flex: 2;
+    min-width: 300px;
+  }
+
+  .emoji-button {
+    color: #333;
+    font: 400 14px / 20px Roboto, sans-serif;
+  }
+
   /* Media Query */
   @media (max-width: 600px) {
     .row-combined {
