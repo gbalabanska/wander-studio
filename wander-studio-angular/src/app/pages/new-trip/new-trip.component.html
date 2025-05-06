@@ -146,7 +146,7 @@
         </table>
       </div>
 
-      <div class="input-group trip-section">
+      <div style="min-height: 450px" class="input-group trip-section">
         <div class="section-header">
           <h2>V. Trip Notes</h2>
           <span class="section-emoji">📝</span>
@@ -164,68 +164,122 @@
       <h2>VI. Add Stops</h2>
       <span class="section-emoji">🗺️</span>
     </div>
-    <div class="map-info">
-      <app-place-autocomplete
-        (placeChanged)="onPlaceChanged($event)"
-        placeholder="Type a city or address..."
-      ></app-place-autocomplete>
 
-      <div class="stops-row">
-        <!-- Table: 1/3 width -->
-        <div class="stops-table">
-          <h3>Your Itinerary</h3>
-          <table *ngIf="fromPlaces.length > 0">
-            <thead>
-              <tr>
-                <th>Location</th>
-                <th>Reorder / Remove</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let place of fromPlaces; let i = index">
-                <td>{{ place.address }}</td>
-                <td>
-                  <button (click)="moveUp(i)" [disabled]="i === 0">⬆</button>
-                  <button
-                    (click)="moveDown(i)"
-                    [disabled]="i === fromPlaces.length - 1"
-                  >
-                    ⬇
-                  </button>
-                  <button (click)="deletePlace(i)">🗑️</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p *ngIf="fromPlaces.length === 0">
-            No stops added yet. Start by entering a destination.
-          </p>
-        </div>
+    <!-- Instruction + Input Row -->
+    <div
+      class="map-input-row"
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      "
+    >
+      <div style="flex: 2; min-width: 250px">
+        <label
+          class="step-description"
+          style="text-align: left; display: block"
+        >
+          Plan your route by adding stops one at a time. Start typing a city or
+          address, select it from the suggestions, and it will be added to your
+          itinerary below. The map will update to reflect your route, and you
+          can reorder or remove stops anytime.
+        </label>
+      </div>
+      <div style="flex: 1; min-width: 250px; margin-top: 5px">
+        <app-place-autocomplete
+          (placeChanged)="onPlaceChanged($event)"
+          placeholder="Type a city or address..."
+        ></app-place-autocomplete>
+      </div>
+    </div>
 
-        <!-- Map: 2/3 width -->
-        <div class="map-container">
-          <h3>Map Preview</h3>
-          <google-map
-            height="400px"
-            width="100%"
-            [zoom]="zoomLevel"
-            [center]="mapCenter"
+    <div class="stops-row">
+      <!-- Table: 1/3 width -->
+      <div class="stops-table">
+        <h2 class="stops-subtitle">Your Itinerary</h2>
+        <div class="pagination-controls">
+          <button (click)="prevPlacePage()" [disabled]="placePageNumber === 0">
+            ⬅️ Prev
+          </button>
+          <span>Page {{ placePageNumber + 1 }} of {{ placeTotalPages }}</span>
+          <button
+            (click)="nextPlacePage()"
+            [disabled]="placePageNumber + 1 >= placeTotalPages"
           >
-            <map-marker
-              *ngFor="let place of fromPlaces"
-              [position]="{
-                lat: place.location?.lat()!,
-                lng: place.location?.lng()!
-              }"
-              [title]="place.name || place.address"
-            ></map-marker>
-
-            <map-directions-renderer
-              *ngIf="directions$ | async as directions"
-              [directions]="directions"
-            ></map-directions-renderer>
-          </google-map>
+            Next ➡️
+          </button>
+          <div>
+            <label for="placePageInput">Go to page:</label>
+            <input
+              id="placePageInput"
+              type="number"
+              [(ngModel)]="placePageInput"
+              [min]="1"
+              [max]="placeTotalPages"
+              (blur)="jumpToPlacePage()"
+            />
+          </div>
         </div>
+
+        <table *ngIf="fromPlaces.length > 0" style="min-height: 450px">
+          <thead>
+            <tr>
+              <th style="padding-left: 30px">Number</th>
+              <th>Location</th>
+              <th>Map</th>
+              <th>Reorder / Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let place of pagedPlaces; let i = index">
+              <td style="text-align: center; padding-left: 10px">
+                {{ i + 1 }}
+              </td>
+              <!-- Display number (1, 2, 3, 4...) -->
+              <td>
+                <b style="color: #1e274e">{{ place.address }}</b>
+              </td>
+              <td>{{ getMapLabel(i) }}</td>
+              <!-- Display Map (A, B, C, D...) -->
+              <td>
+                <button (click)="moveUp(i)">🔼</button>
+                <button (click)="moveDown(i)">🔽</button>
+                <button (click)="deletePlace(i)">❌</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p *ngIf="fromPlaces.length === 0">
+          No stops added yet. Start by entering a destination.
+        </p>
+      </div>
+
+      <!-- Map: 2/3 width -->
+      <div class="map-container">
+        <h2 class="stops-subtitle">Map Preview</h2>
+        <google-map
+          height="500px"
+          width="100%"
+          [zoom]="zoomLevel"
+          [center]="mapCenter"
+        >
+          <map-marker
+            *ngFor="let place of fromPlaces"
+            [position]="{
+              lat: place.location?.lat()!,
+              lng: place.location?.lng()!
+            }"
+            [title]="place.name || place.address"
+          ></map-marker>
+
+          <map-directions-renderer
+            *ngIf="directions$ | async as directions"
+            [directions]="directions"
+          ></map-directions-renderer>
+        </google-map>
       </div>
     </div>
   </section>
@@ -580,16 +634,17 @@
     min-width: 220px;
   }
 
+  .stops-subtitle {
+    font-size: 1.2rem;
+    color: #4b3f72;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
   /* Table */
   table {
     width: 100%;
     margin-top: 15px;
     border-collapse: collapse;
-  }
-
-  /* Map Styling */
-  .map-container {
-    margin-top: 20px;
   }
 
   .stops-row {
@@ -598,10 +653,54 @@
     margin-top: 20px;
     flex-wrap: wrap;
   }
-
   .stops-table {
     flex: 1;
     min-width: 280px;
+  }
+  .stops-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    table-layout: auto;
+  }
+
+  .stops-table th {
+    background-color: #f8f8f8;
+    color: #555;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .stops-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .stops-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  .stops-table tbody tr:hover {
+    background-color: #e0f7fa;
+    transition: background-color 0.3s ease;
+  }
+
+  .stops-table button {
+    background-color: #6c5ce7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 6px 10px;
+    margin: 0 2px;
+  }
+
+  .stops-table button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
   }
 
   th,

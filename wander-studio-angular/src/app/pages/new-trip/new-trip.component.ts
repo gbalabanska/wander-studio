@@ -61,10 +61,53 @@ export class NewTripComponent {
     private directionsService: MapDirectionsService,
     private friendService: FriendService
   ) {}
-
   ngOnInit() {
     this.loadFriends();
+
+    // // Add 9 mock places for testing
+    this.fromPlaces = [
+      {
+        address: 'New York, NY',
+        location: new google.maps.LatLng(40.7128, -74.006),
+      },
+      {
+        address: 'Los Angeles, CA',
+        location: new google.maps.LatLng(34.0522, -118.2437),
+      },
+      {
+        address: 'Chicago, IL',
+        location: new google.maps.LatLng(41.8781, -87.6298),
+      },
+      {
+        address: 'Houston, TX',
+        location: new google.maps.LatLng(29.7604, -95.3698),
+      },
+      {
+        address: 'Phoenix, AZ',
+        location: new google.maps.LatLng(33.4484, -112.074),
+      },
+      {
+        address: 'Philadelphia, PA',
+        location: new google.maps.LatLng(39.9526, -75.1652),
+      },
+      {
+        address: 'San Antonio, TX',
+        location: new google.maps.LatLng(29.4241, -98.4936),
+      },
+      {
+        address: 'San Diego, CA',
+        location: new google.maps.LatLng(32.7157, -117.1611),
+      },
+      {
+        address: 'Dallas, TX',
+        location: new google.maps.LatLng(32.7767, -96.797),
+      },
+    ];
+
+    // Optionally trigger route calculation
+    this.getRoute();
   }
+
   selectEmoji(id: string) {
     this.selectedEmojiId = id;
   }
@@ -197,5 +240,38 @@ export class NewTripComponent {
 
     this.pageNumber = this.pageInput - 1; // Convert to zero-based index
     this.loadFriends(); // Load the friends of the chosen page
+  }
+
+  // Pagination state for places
+  placePageNumber: number = 0;
+  placesPerPage: number = 5;
+  placePageInput: number = 1;
+
+  get placeTotalPages(): number {
+    return Math.ceil(this.fromPlaces.length / this.placesPerPage);
+  }
+
+  get pagedPlaces() {
+    const start = this.placePageNumber * this.placesPerPage;
+    return this.fromPlaces.slice(start, start + this.placesPerPage);
+  }
+
+  prevPlacePage() {
+    if (this.placePageNumber > 0) this.placePageNumber--;
+  }
+
+  nextPlacePage() {
+    if (this.placePageNumber + 1 < this.placeTotalPages) this.placePageNumber++;
+  }
+
+  jumpToPlacePage() {
+    const page = this.placePageInput - 1;
+    if (page >= 0 && page < this.placeTotalPages) {
+      this.placePageNumber = page;
+    }
+  }
+
+  getMapLabel(index: number): string {
+    return String.fromCharCode(65 + index);
   }
 }

@@ -7,6 +7,8 @@ import {
   Output,
   ViewChild,
   OnInit,
+  OnDestroy,
+  AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,22 +28,37 @@ export interface PlaceSearchResult {
   standalone: true,
   imports: [CommonModule, MatFormFieldModule, MatInputModule, FormsModule],
   template: `
-    <mat-form-field appearance="outline">
-      <input [placeholder]="placeholder" #inputField matInput />
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ label }}</mat-label>
+      <input
+        #inputField
+        matInput
+        [placeholder]="placeholder"
+        aria-label="Place search input"
+      />
+      <mat-hint>{{ hint }}</mat-hint>
     </mat-form-field>
   `,
   styles: [
     `
-      .mat-form-field {
+      .full-width {
         width: 100%;
+      }
+
+      input {
+        font-size: 16px;
       }
     `,
   ],
 })
-export class PlaceAutocompleteComponent implements OnInit {
+export class PlaceAutocompleteComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   @ViewChild('inputField') inputField!: ElementRef;
 
-  @Input() placeholder = 'Enter address...';
+  @Input() placeholder = 'Type a city or address...';
+  @Input() label = 'Destination or Stop';
+  @Input() hint = 'e.g., Eiffel Tower, New York City, 1600 Amphitheatre Pkwy';
 
   @Output() placeChanged = new EventEmitter<PlaceSearchResult>();
 
@@ -49,10 +66,9 @@ export class PlaceAutocompleteComponent implements OnInit {
 
   constructor(private ngZone: NgZone) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  ngAfterViewInit() {
-    // Check if google.maps is available and initialize the autocomplete
+  ngAfterViewInit(): void {
     if (typeof google !== 'undefined' && google.maps && google.maps.places) {
       this.autocomplete = new google.maps.places.Autocomplete(
         this.inputField.nativeElement
@@ -81,11 +97,11 @@ export class PlaceAutocompleteComponent implements OnInit {
     place: google.maps.places.PlaceResult | undefined
   ): string | undefined {
     return place?.photos && place?.photos.length > 0
-      ? place?.photos[0].getUrl({ maxWidth: 500 })
+      ? place.photos[0].getUrl({ maxWidth: 500 })
       : undefined;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.autocomplete) {
       google.maps.event.clearInstanceListeners(this.autocomplete);
     }
