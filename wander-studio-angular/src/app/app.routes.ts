@@ -6,6 +6,7 @@ import { LoginComponent } from './authentication/login/login.component';
 import { SignupComponent } from './authentication/signup/signup.component';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { AuthGuard } from './authentication/auth.guard';
+import { EditTripComponent } from './pages/edit-trip/edit-trip.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -22,6 +23,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'friends', component: FriendsComponent },
       { path: 'new-trip', component: NewTripComponent },
+      { path: 'edit-trip', component: EditTripComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // default when inside layout
     ],
   },

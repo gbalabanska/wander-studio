@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -11,6 +12,7 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./trip-view.component.scss'],
 })
 export class TripViewComponent implements OnInit, OnDestroy {
+  //TODO: този компонент трябва да ползва новите данни за пътуването от DTO-то
   zoomLevel = 6;
   mapCenter: { lat: number; lng: number } = { lat: 35.6895, lng: 139.6917 }; // Tokyo
   trip = {
@@ -43,7 +45,10 @@ export class TripViewComponent implements OnInit, OnDestroy {
   directionsResults: google.maps.DirectionsResult | undefined;
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private mapDirectionsService: MapDirectionsService) {}
+  constructor(
+    private mapDirectionsService: MapDirectionsService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     if (this.trip.pointsOfInterest.length > 1) {
@@ -74,6 +79,10 @@ export class TripViewComponent implements OnInit, OnDestroy {
       this.mapCenter = this.trip.pointsOfInterest[0].location;
       this.zoomLevel = 14; // Zoom in if only one point
     }
+  }
+
+  redirectToEditTrip() {
+    this.router.navigate(['/layout/edit-trip']);
   }
 
   ngOnDestroy(): void {

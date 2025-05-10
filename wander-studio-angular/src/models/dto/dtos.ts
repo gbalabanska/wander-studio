@@ -19,3 +19,17 @@ export interface PagedResponse<T> {
   totalPages: number;
   totalElements: number;
 }
+
+export interface TripDto {
+  name: string;
+  dateFrom: string; // ISO date
+  dateTo: string;
+  tripEmoji: string;
+  description: string;
+  friendIds: number[]; // e.g., [2, 5, 8]
+  places: {
+    address: string;
+    latitude?: number;
+    longitude?: number;
+  }[];
+}

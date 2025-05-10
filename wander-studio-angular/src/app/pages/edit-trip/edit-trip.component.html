@@ -1,6 +1,6 @@
 <app-menu-header
-  [header]="'Create a New Trip'"
-  [subtitle]="'Plan the journey, share the adventure.'"
+  [header]="'Edit Trip Details'"
+  [subtitle]="'Modify your trip information and make updates.'"
 ></app-menu-header>
 
 <div class="container" [@slideInFromTop]>
@@ -55,7 +55,11 @@
         <div class="emoji-picker">
           <!-- Emoji Picker Button now placed under the label -->
           <div class="emoji-picker-wrapper">
-            <button type="button" class="emoji-button selected-display">
+            <button
+              id="trip-emoji"
+              type="button"
+              class="emoji-button selected-display"
+            >
               <span class="emoji-symbol">
                 {{ getSelectedEmoji()?.symbol || "🎨" }}
               </span>
@@ -288,7 +292,7 @@
     </div>
   </section>
   <div class="submit-trip-button">
-    <button (click)="submitTrip()">✅ Create Trip</button>
+    <button (click)="submitTrip()">✅ UPDATE Trip</button>
   </div>
 </div>
 

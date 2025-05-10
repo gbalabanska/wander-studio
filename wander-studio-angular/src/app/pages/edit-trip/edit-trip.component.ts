@@ -16,9 +16,11 @@ import { Friend } from '../../../models/dto/dtos';
 import { TripDto } from '../../../models/dto/dtos';
 import { EMOJI_OPTIONS, EmojiOption } from '../../shared/emoji-list';
 import { MenuHeaderComponent } from '../../layout/menu-header/menu-header.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TripService } from '../../services/trip.service';
 
 @Component({
-  selector: 'app-new-trip',
+  selector: 'app-edit-trip',
   standalone: true,
   imports: [
     CommonModule,
@@ -41,10 +43,10 @@ import { MenuHeaderComponent } from '../../layout/menu-header/menu-header.compon
       ]),
     ]),
   ],
-  templateUrl: './new-trip.component.html',
-  styleUrls: ['./new-trip.component.scss'],
+  templateUrl: './edit-trip.component.html',
+  styleUrls: ['./edit-trip.component.scss'],
 })
-export class NewTripComponent {
+export class EditTripComponent {
   fromPlaces: PlaceSearchResult[] = [];
   zoomLevel = 12; // Adjust initial zoom level
   mapCenter: { lat: number; lng: number } = { lat: 42.1354, lng: 24.7453 }; // Default to Plovdiv
@@ -58,90 +60,72 @@ export class NewTripComponent {
 
   constructor(
     private directionsService: MapDirectionsService,
-    private friendService: FriendService
+    private friendService: FriendService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private tripService: TripService
   ) {}
-  ngOnInit() {
+
+  trip: TripDto | null = null;
+  tripId: number | null = null;
+
+  ngOnInit(): void {
     this.loadFriends();
-
-    // // Add 9 mock places for testing
-    // this.fromPlaces = [
-    //   {
-    //     address: 'New York, NY',
-    //     location: new google.maps.LatLng(40.7128, -74.006),
-    //   },
-    //   {
-    //     address: 'Los Angeles, CA',
-    //     location: new google.maps.LatLng(34.0522, -118.2437),
-    //   },
-    //   {
-    //     address: 'Chicago, IL',
-    //     location: new google.maps.LatLng(41.8781, -87.6298),
-    //   },
-    //   {
-    //     address: 'Houston, TX',
-    //     location: new google.maps.LatLng(29.7604, -95.3698),
-    //   },
-    //   {
-    //     address: 'Phoenix, AZ',
-    //     location: new google.maps.LatLng(33.4484, -112.074),
-    //   },
-    //   {
-    //     address: 'Philadelphia, PA',
-    //     location: new google.maps.LatLng(39.9526, -75.1652),
-    //   },
-    //   {
-    //     address: 'San Antonio, TX',
-    //     location: new google.maps.LatLng(29.4241, -98.4936),
-    //   },
-    //   {
-    //     address: 'San Diego, CA',
-    //     location: new google.maps.LatLng(32.7157, -117.1611),
-    //   },
-    //   {
-    //     address: 'Dallas, TX',
-    //     location: new google.maps.LatLng(32.7767, -96.797),
-    //   },
-    // ];
-
-    // Optionally trigger route calculation
     this.getRoute();
+    this.loadTrip(2);
   }
-  submitTrip() {
-    const name = (document.getElementById('trip-name') as HTMLInputElement)
-      .value;
-    const dateFrom = (document.getElementById('start-date') as HTMLInputElement)
-      .value;
-    const dateTo = (document.getElementById('end-date') as HTMLInputElement)
-      .value;
-    const description = (
-      document.getElementById('trip-notes') as HTMLTextAreaElement
-    ).value;
-    const selectedEmoji = this.selectedEmojiId;
 
-    // Use the stateful Set for selected friends
-    const friendIds = Array.from(this.invitedFriendIds);
+  loadTrip(tripId: number): void {
+    this.tripService.getTripById(tripId).subscribe({
+      next: (response) => {
+        if (response.data) {
+          this.trip = response.data;
+          console.log('Loaded trip:', this.trip);
+          this.fillFormFields();
+        }
+      },
+      error: (err) => {
+        console.error('Error loading trip:', err);
+      },
+    });
+  }
 
-    // Assemble the places from the state
-    const places = this.fromPlaces.map((place) => ({
-      address: place.address,
-      latitude: place.location?.lat(),
-      longitude: place.location?.lng(),
-    }));
+  fillFormFields(): void {
+    if (this.trip) {
+      const {
+        name,
+        dateFrom,
+        dateTo,
+        tripEmoji,
+        description,
+        friendIds,
+        places,
+      } = this.trip;
 
-    const payload: TripDto = {
-      name,
-      dateFrom,
-      dateTo,
-      tripEmoji: selectedEmoji,
-      description,
-      friendIds,
-      places,
-    };
+      (document.getElementById('trip-name') as HTMLInputElement).value = name;
+      (document.getElementById('start-date') as HTMLInputElement).value =
+        dateFrom;
+      (document.getElementById('end-date') as HTMLInputElement).value = dateTo;
+      (document.getElementById('trip-emoji') as HTMLInputElement).value =
+        tripEmoji;
+      (document.getElementById('trip-notes') as HTMLTextAreaElement).value =
+        description;
 
-    console.log('Trip Payload:', payload);
+      this.selectedEmojiId = tripEmoji;
+      this.invitedFriendIds = new Set(friendIds);
 
-    // You can follow this up with an HTTP POST request to your backend
-    // this.http.post('/api/trips', payload).subscribe(...)
+      this.fromPlaces = places.map((place) => ({
+        address: place.address,
+        location: new google.maps.LatLng(place.latitude!, place.longitude!),
+      }));
+      this.getRoute();
+    }
+  }
+  submitTrip(): void {
+    if (this.trip) {
+      // Send updated trip data to the server (you can implement the update logic here)
+      console.log('Updated trip:', this.trip);
+    }
   }
 
   selectEmoji(id: string) {
