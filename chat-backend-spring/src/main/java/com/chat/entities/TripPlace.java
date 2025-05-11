@@ -14,8 +14,9 @@ public class TripPlace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "trip_id")
-    private Integer tripId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trip_id", nullable = false)
+    private Trip trip;
 
     private String address;
     private Double latitude;
@@ -24,3 +25,4 @@ public class TripPlace {
     @Column(name = "place_order")
     private Integer placeOrder;
 }
+

@@ -106,6 +106,7 @@ export class NewTripComponent {
     // Optionally trigger route calculation
     this.getRoute();
   }
+
   submitTrip() {
     const name = (document.getElementById('trip-name') as HTMLInputElement)
       .value;
@@ -139,9 +140,6 @@ export class NewTripComponent {
     };
 
     console.log('Trip Payload:', payload);
-
-    // You can follow this up with an HTTP POST request to your backend
-    // this.http.post('/api/trips', payload).subscribe(...)
   }
 
   selectEmoji(id: string) {

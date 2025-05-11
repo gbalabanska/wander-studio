@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface TripPlaceRepository extends JpaRepository<TripPlace, Integer> {
     List<TripPlace> findAllByTripId(int tripId);
+
+    void deleteAllByTripId(int tripId);
+
 }

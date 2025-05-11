@@ -4,16 +4,16 @@ import com.chat.dto.TripDto;
 import com.chat.entities.Trip;
 import com.chat.entities.TripMember;
 import com.chat.entities.TripPlace;
+import com.chat.errors.UnauthorizedTripAccessException;
 import com.chat.repositories.TripMemberRepository;
 import com.chat.repositories.TripPlaceRepository;
 import com.chat.repositories.TripRepository;
-import com.chat.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +23,6 @@ public class TripService {
     private final TripRepository tripRepository;
     private final TripMemberRepository tripMemberRepository;
     private final TripPlaceRepository tripPlaceRepository;
-    private final UserRepository userRepository;
 
     @Transactional
     public void createTrip(TripDto request, Integer currentUserId) {
@@ -38,17 +37,17 @@ public class TripService {
 
         Trip savedTrip = tripRepository.save(trip);
 
-        // 2. Save owner
+        // 2. Save owner as a TripMember
         tripMemberRepository.save(TripMember.builder()
-                .tripId(savedTrip.getId())
+                .trip(savedTrip)  // Setting the Trip object directly
                 .userId(currentUserId)
                 .role("OWNER")
                 .build());
 
-        // 3. Save invited members
+        // 3. Save invited members as TripMembers
         for (Integer friendId : request.getFriendIds()) {
             tripMemberRepository.save(TripMember.builder()
-                    .tripId(savedTrip.getId())
+                    .trip(savedTrip)  // Setting the Trip object directly
                     .userId(friendId)
                     .role("MEMBER")
                     .build());
@@ -58,7 +57,7 @@ public class TripService {
         int order = 0;
         for (TripDto.PlaceDTO place : request.getPlaces()) {
             tripPlaceRepository.save(TripPlace.builder()
-                    .tripId(savedTrip.getId())
+                    .trip(savedTrip)  // Setting the Trip object directly
                     .address(place.getAddress())
                     .latitude(place.getLatitude())
                     .longitude(place.getLongitude())
@@ -67,18 +66,34 @@ public class TripService {
         }
     }
 
-//    public List<TripDto> getTripsForUser(int userId) {
-//        List<Trip> trips = tripRepository.findAllByUserId(userId);
-//        return trips.stream()
-//                .map(this::mapToDto)
-//                .collect(Collectors.toList());
-//    }
+    public List<TripDto> getTripsForUser(int userId) {
+        // Get all trips where the user is
+        List<TripMember> tripMembers = tripMemberRepository.findByUserId(userId);
+
+        // Get trips related to the user
+        List<Trip> trips = tripMembers.stream()
+                .map(TripMember::getTrip)  // Extract the Trip object from each TripMember
+                .distinct()  // Ensure there are no duplicates (in case a user is part of multiple roles)
+                .toList();
+
+        // Map each trip to a DTO
+        return trips.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
 
     public TripDto getTripByIdForUser(int tripId, int userId) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
+        Optional<Trip> tripOptional = tripRepository.findById(tripId);
+
+        if (tripOptional.isEmpty()) {
+            return null; // or return new ApiResponse<>(null, "Trip not found", false);
+        }
+
+        Trip trip = tripOptional.get();
 
         boolean isMember = tripMemberRepository.existsByTripIdAndUserId(tripId, userId);
+
         if (!isMember) {
             throw new RuntimeException("Access denied");
         }
@@ -86,58 +101,63 @@ public class TripService {
         return mapToDto(trip);
     }
 
-//    @Transactional
-//    public void updateTrip(int tripId, TripDto request, int userId) {
-//        Trip trip = tripRepository.findById(tripId)
-//                .orElseThrow(() -> new RuntimeException("Trip not found"));
-//
-//        TripMember owner = tripMemberRepository.findByTripIdAndUserIdAndRole(tripId, userId, "OWNER")
-//                .orElseThrow(() -> new RuntimeException("Only the owner can update the trip"));
-//
-//        // Update trip entity
-//        trip.setName(request.getName());
-//        trip.setDateFrom(request.getDateFrom());
-//        trip.setDateTo(request.getDateTo());
-//        trip.setDescription(request.getDescription());
-//        trip.setTripEmoji(request.getTripEmoji());
-//        tripRepository.save(trip);
-//
-//        // Update places
-//        tripPlaceRepository.deleteAllByTripId(tripId);
-//        for (int i = 0; i < request.getPlaces().size(); i++) {
-//            var p = request.getPlaces().get(i);
-//            TripPlace place = new TripPlace();
-//            place.setTrip(trip);
-//            place.setAddress(p.getAddress());
-//            place.setLatitude(p.getLatitude());
-//            place.setLongitude(p.getLongitude());
-//            place.setPlaceOrder(i);
-//            tripPlaceRepository.save(place);
-//        }
-//
-//        // Update members (excluding owner)
-//        tripMemberRepository.deleteByTripIdExceptOwner(tripId, userId);
-//        for (Integer friendId : request.getFriendIds()) {
-//            TripMember member = new TripMember();
-//            member.setTrip(trip);
-//            member.setUser(userRepository.findById(friendId).orElseThrow());
-//            member.setRole("MEMBER");
-//            tripMemberRepository.save(member);
-//        }
-//    }
-//
-//    @Transactional
-//    public void deleteTrip(int tripId, int userId) {
-//        TripMember owner = tripMemberRepository.findByTripIdAndUserIdAndRole(tripId, userId, "OWNER")
-//                .orElseThrow(() -> new RuntimeException("Only the owner can delete the trip"));
-//        tripRepository.deleteById(tripId);
-//    }
+    @Transactional
+    public void updateTrip(int tripId, TripDto request, int userId) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new RuntimeException("Trip not found"));
 
-    // You likely already have this, but here's a simple DTO mapping method:
+        // Check ownership
+        TripMember owner = tripMemberRepository.findByTripIdAndUserIdAndRole(tripId, userId, "OWNER")
+                .orElseThrow(() -> new RuntimeException("Only the owner can update the trip"));
+
+        // Update trip entity
+        trip.setName(request.getName());
+        trip.setDateFrom(request.getDateFrom());
+        trip.setDateTo(request.getDateTo());
+        trip.setDescription(request.getDescription());
+        trip.setTripEmoji(request.getTripEmoji());
+
+        // Clear and re-add places
+        trip.getPlaces().clear();
+        for (int i = 0; i < request.getPlaces().size(); i++) {
+            var p = request.getPlaces().get(i);
+            TripPlace place = TripPlace.builder()
+                    .trip(trip)
+                    .address(p.getAddress())
+                    .latitude(p.getLatitude())
+                    .longitude(p.getLongitude())
+                    .placeOrder(i)
+                    .build();
+            trip.getPlaces().add(place);
+        }
+
+        // Remove only non-owner members from DB
+        tripMemberRepository.deleteByTripIdAndRole(tripId, "MEMBER");
+
+        // Re-add members (excluding owner)
+        for (Integer friendId : request.getFriendIds()) {
+            TripMember member = TripMember.builder()
+                    .trip(trip)
+                    .userId(friendId)
+                    .role("MEMBER")
+                    .build();
+            trip.getMembers().add(member);
+        }
+
+        tripRepository.save(trip);
+    }
+
+
+    @Transactional
+    public void deleteTrip(int tripId, int userId) {
+        TripMember owner = tripMemberRepository.findByTripIdAndUserIdAndRole(tripId, userId, "OWNER")
+                .orElseThrow(() -> new UnauthorizedTripAccessException("Only the owner can delete the trip"));
+
+        tripRepository.deleteById(tripId); // Cascade will handle removing trip places and trip members
+    }
+
     private TripDto mapToDto(Trip trip) {
-        // Get places
-        List<TripPlace> places = tripPlaceRepository.findAllByTripId(trip.getId());
-        List<TripDto.PlaceDTO> placeDTOs = places.stream()
+        List<TripDto.PlaceDTO> placeDTOs = trip.getPlaces().stream()
                 .map(place -> TripDto.PlaceDTO.builder()
                         .address(place.getAddress())
                         .latitude(place.getLatitude())
@@ -145,8 +165,7 @@ public class TripService {
                         .build())
                 .collect(Collectors.toList());
 
-        // Get members excluding the owner
-        List<Integer> friendIds = tripMemberRepository.findAllByTripId(trip.getId()).stream()
+        List<Integer> friendIds = trip.getMembers().stream()
                 .filter(member -> !"OWNER".equals(member.getRole()))
                 .map(TripMember::getUserId)
                 .collect(Collectors.toList());
@@ -162,5 +181,4 @@ public class TripService {
                 .places(placeDTOs)
                 .build();
     }
-
 }

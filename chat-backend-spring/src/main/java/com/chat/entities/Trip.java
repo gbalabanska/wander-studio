@@ -2,6 +2,7 @@ package com.chat.entities;
 import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "trip")
@@ -26,4 +27,11 @@ public class Trip {
     private String tripEmoji;
 
     private String description;
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripMember> members;
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripPlace> places;
 }
+

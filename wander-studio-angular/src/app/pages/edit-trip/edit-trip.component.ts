@@ -121,11 +121,40 @@ export class EditTripComponent {
       this.getRoute();
     }
   }
-  submitTrip(): void {
-    if (this.trip) {
-      // Send updated trip data to the server (you can implement the update logic here)
-      console.log('Updated trip:', this.trip);
-    }
+
+  submitTrip() {
+    const name = (document.getElementById('trip-name') as HTMLInputElement)
+      .value;
+    const dateFrom = (document.getElementById('start-date') as HTMLInputElement)
+      .value;
+    const dateTo = (document.getElementById('end-date') as HTMLInputElement)
+      .value;
+    const description = (
+      document.getElementById('trip-notes') as HTMLTextAreaElement
+    ).value;
+    const selectedEmoji = this.selectedEmojiId;
+
+    // Use the stateful Set for selected friends
+    const friendIds = Array.from(this.invitedFriendIds);
+
+    // Assemble the places from the state
+    const places = this.fromPlaces.map((place) => ({
+      address: place.address,
+      latitude: place.location?.lat(),
+      longitude: place.location?.lng(),
+    }));
+
+    const payload: TripDto = {
+      name,
+      dateFrom,
+      dateTo,
+      tripEmoji: selectedEmoji,
+      description,
+      friendIds,
+      places,
+    };
+
+    console.log('Trip Payload:', payload);
   }
 
   selectEmoji(id: string) {

@@ -16,8 +16,9 @@ public class TripMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "trip_id")
-    private Integer tripId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trip_id", nullable = false)
+    private Trip trip;
 
     @Column(name = "user_id")
     private Integer userId;

@@ -1,5 +1,7 @@
 package com.chat.advice;
 
+import com.chat.dto.ApiResponse;
+import com.chat.errors.UnauthorizedTripAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,12 @@ public class ValidationExceptionHandler {
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-
+    @ExceptionHandler(UnauthorizedTripAccessException.class)
+    public ResponseEntity<ApiResponse<String>> handleUnauthorizedAccess(UnauthorizedTripAccessException ex) {
+        logger.warn("Unauthorized access: {}", ex.getMessage());
+        ApiResponse<String> response = new ApiResponse<>(null, ex.getMessage(), false);
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
     /**
      * Обработва неочаквани грешки.
      */
