@@ -43,4 +43,6 @@ export class SignupComponent {
       },
     });
   }
+  //todo адд гендер
+  //стайл формы логн/сигнин
 }

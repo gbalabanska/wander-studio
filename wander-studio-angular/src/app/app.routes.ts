@@ -23,7 +23,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'friends', component: FriendsComponent },
       { path: 'new-trip', component: NewTripComponent },
-      { path: 'edit-trip', component: EditTripComponent },
+      { path: 'edit-trip/:id', component: EditTripComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // default when inside layout
     ],
   },

@@ -25,4 +25,5 @@ export class AuthGuard implements CanActivate {
   }
 
   //todo: handle expired token and redirect to login page, make BE return 401 unauthorized
+  //фикс токен
 }

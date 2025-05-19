@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TripViewComponent } from '../trip-view/trip-view.component';
+import { TripService } from '../../services/trip.service';
+import { TripDto } from '../../../models/dto/dtos';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,8 +42,7 @@ import { TripViewComponent } from '../trip-view/trip-view.component';
     />
 
     <div class="container" [@slideInFromTop]>
-      <app-trip-view></app-trip-view> <app-trip-view></app-trip-view>
-      <app-trip-view></app-trip-view>
+      <app-trip-view *ngFor="let trip of trips" [trip]="trip"></app-trip-view>
     </div>
   `,
   styles: [
@@ -97,4 +98,19 @@ import { TripViewComponent } from '../trip-view/trip-view.component';
     `,
   ],
 })
-export class DashboardComponent {}
+export class DashboardComponent {
+  trips: TripDto[] | null = [];
+
+  constructor(private tripService: TripService) {}
+
+  ngOnInit() {
+    this.tripService.getAllTrips().subscribe({
+      next: (res) => {
+        this.trips = res.data;
+      },
+      error: (err) => {
+        console.error('Error fetching trips', err);
+      },
+    });
+  }
+}
