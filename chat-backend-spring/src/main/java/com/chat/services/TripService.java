@@ -131,17 +131,27 @@ public class TripService {
             trip.getPlaces().add(place);
         }
 
-        // Remove only non-owner members from DB
-        tripMemberRepository.deleteByTripIdAndRole(tripId, "MEMBER");
+        // --- ✅ KEY FIX: Delete all existing members (including OWNER) ---
+        tripMemberRepository.deleteByTripId(tripId);
 
-        // Re-add members (excluding owner)
+        // Re-add OWNER
+        TripMember newOwner = TripMember.builder()
+                .trip(trip)
+                .userId(userId)
+                .role("OWNER")
+                .build();
+        trip.getMembers().add(newOwner);
+
+        // Re-add members (excluding OWNER)
         for (Integer friendId : request.getFriendIds()) {
-            TripMember member = TripMember.builder()
-                    .trip(trip)
-                    .userId(friendId)
-                    .role("MEMBER")
-                    .build();
-            trip.getMembers().add(member);
+            if (!friendId.equals(userId)) {
+                TripMember member = TripMember.builder()
+                        .trip(trip)
+                        .userId(friendId)
+                        .role("MEMBER")
+                        .build();
+                trip.getMembers().add(member);
+            }
         }
 
         tripRepository.save(trip);

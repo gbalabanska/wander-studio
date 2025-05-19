@@ -16,6 +16,7 @@ import { Friend } from '../../../models/dto/dtos';
 import { TripDto } from '../../../models/dto/dtos';
 import { EMOJI_OPTIONS, EmojiOption } from '../../shared/emoji-list';
 import { MenuHeaderComponent } from '../../layout/menu-header/menu-header.component';
+import { TripService } from '../../services/trip.service';
 
 @Component({
   selector: 'app-new-trip',
@@ -58,7 +59,8 @@ export class NewTripComponent {
 
   constructor(
     private directionsService: MapDirectionsService,
-    private friendService: FriendService
+    private friendService: FriendService,
+    private tripService: TripService
   ) {}
   ngOnInit() {
     this.loadFriends();
@@ -140,6 +142,19 @@ export class NewTripComponent {
     };
 
     console.log('Trip Payload:', payload);
+
+    this.tripService.createTrip(payload).subscribe({
+      next: (res) => {
+        // alert('Trip created successfully!');
+        alert(res.message);
+        console.log('Trip created successfully:', res);
+        // Optionally navigate to another page or show a success message
+      },
+      error: (err) => {
+        console.error('Error creating trip:', err);
+        // Handle error (e.g., show a message to the user)
+      },
+    });
   }
 
   selectEmoji(id: string) {

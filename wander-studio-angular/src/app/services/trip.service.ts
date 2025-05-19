@@ -9,13 +9,25 @@ import { TripDto } from '../../models/dto/dtos';
   providedIn: 'root',
 })
 export class TripService {
-  private readonly tripsUrl = environment.apiUrl + '/api/trips';
+  private readonly baseUrl = environment.apiUrl + '/api/trips';
 
   constructor(private http: HttpClient) {}
 
   // Get trip by ID
   getTripById(tripId: number): Observable<ApiResponse<TripDto>> {
-    const url = `${this.tripsUrl}/${tripId}`;
+    const url = `${this.baseUrl}/${tripId}`;
     return this.http.get<ApiResponse<TripDto>>(url, { withCredentials: true });
+  }
+
+  createTrip(newTrip: TripDto): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, newTrip, {
+      withCredentials: true,
+    });
+  }
+  updateTrip(newTrip: TripDto, tripId: number): Observable<ApiResponse<void>> {
+    const url = `${this.baseUrl}/${tripId}`;
+    return this.http.put<ApiResponse<void>>(url, newTrip, {
+      withCredentials: true,
+    });
   }
 }

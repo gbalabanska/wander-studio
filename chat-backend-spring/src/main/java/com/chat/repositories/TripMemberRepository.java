@@ -18,4 +18,8 @@ public interface TripMemberRepository extends JpaRepository<TripMember, Integer>
     Optional<TripMember> findByTripIdAndUserIdAndRole(int tripId, int userId, String role);
     void deleteByTripIdAndRole(Integer tripId, String role);
 
+    @Modifying
+    @Query("DELETE FROM TripMember tm WHERE tm.trip.id = :tripId")
+    void deleteByTripId(@Param("tripId") int tripId);
+
 }

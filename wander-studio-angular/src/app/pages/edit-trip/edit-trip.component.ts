@@ -72,7 +72,7 @@ export class EditTripComponent {
   ngOnInit(): void {
     this.loadFriends();
     this.getRoute();
-    this.loadTrip(2);
+    this.loadTrip(1); //todo refactor that
   }
 
   loadTrip(tripId: number): void {
@@ -155,6 +155,17 @@ export class EditTripComponent {
     };
 
     console.log('Trip Payload:', payload);
+    this.tripService.updateTrip(payload, 1).subscribe({
+      next: (res) => {
+        alert(res.message);
+        // Optionally navigate to another page or show a success message
+      },
+      error: (err) => {
+        console.error('Error creating trip:', err);
+        alert('Error creating trip!');
+        // Handle error (e.g., show a message to the user)
+      },
+    });
   }
 
   selectEmoji(id: string) {
