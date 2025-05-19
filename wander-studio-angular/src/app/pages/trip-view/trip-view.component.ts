@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { TripService } from '../../services/trip.service';
+import { EMOJI_OPTIONS, EmojiOption } from '../../shared/emoji-list';
 
 @Component({
   selector: 'app-trip-view',
@@ -12,77 +14,91 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./trip-view.component.scss'],
 })
 export class TripViewComponent implements OnInit, OnDestroy {
-  //TODO: този компонент трябва да ползва новите данни за пътуването от DTO-то
-  zoomLevel = 6;
-  mapCenter: { lat: number; lng: number } = { lat: 35.6895, lng: 139.6917 }; // Tokyo
-  trip = {
-    name: 'Exploring Japan',
-    color: '#4b3f72',
-    startDate: '2025-05-10',
-    endDate: '2025-05-24',
-    isSolo: false,
-    friends: ['Alex', 'Jamie', 'Morgan'],
-    pointsOfInterest: [
-      {
-        name: 'Tokyo Tower',
-        location: { lat: 35.6586, lng: 139.7454 },
-      },
-      {
-        name: 'Kyoto Bamboo Forest',
-        location: { lat: 35.0094, lng: 135.6668 },
-      },
-      {
-        name: 'Mt. Fuji',
-        location: { lat: 35.3606, lng: 138.7274 },
-      },
-      {
-        name: 'Osaka Castle',
-        location: { lat: 34.6873, lng: 135.5262 },
-      },
-    ],
-  };
-
+  zoomLevel = 12;
+  mapCenter: { lat: number; lng: number } = { lat: 42.1354, lng: 24.7453 }; // fallback center
+  directions$ = new BehaviorSubject<google.maps.DirectionsResult | null>(null);
   directionsResults: google.maps.DirectionsResult | undefined;
   private readonly destroy$ = new Subject<void>();
+  @Input() trip: any;
+  emojiOptions: EmojiOption[] = EMOJI_OPTIONS;
+  selectedEmojiId: string = 'car'; // default emoji
 
   constructor(
     private mapDirectionsService: MapDirectionsService,
-    private router: Router
+    private router: Router,
+    private tripService: TripService // Inject your TripService here
   ) {}
 
-  ngOnInit() {
-    if (this.trip.pointsOfInterest.length > 1) {
-      const waypoints: google.maps.DirectionsWaypoint[] =
-        this.trip.pointsOfInterest.slice(1, -1).map((poi) => ({
-          location: poi.location,
-          stopover: true, // To ensure the route goes through these points
-        }));
-
-      const request: google.maps.DirectionsRequest = {
-        origin: this.trip.pointsOfInterest[0].location,
-        destination:
-          this.trip.pointsOfInterest[this.trip.pointsOfInterest.length - 1]
-            .location,
-        waypoints: waypoints,
-        travelMode: google.maps.TravelMode.DRIVING,
-      };
-
-      this.mapDirectionsService
-        .route(request)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((response) => {
-          this.directionsResults = response.result;
-        });
-
-      this.mapCenter = this.trip.pointsOfInterest[0].location;
-    } else if (this.trip.pointsOfInterest.length === 1) {
-      this.mapCenter = this.trip.pointsOfInterest[0].location;
-      this.zoomLevel = 14; // Zoom in if only one point
+  ngOnInit(): void {
+    if (this.trip?.places?.length > 0) {
+      const first = this.trip.places[0];
+      this.mapCenter = { lat: first.latitude, lng: first.longitude };
+      this.getRoute();
     }
   }
 
+  getRoute(): void {
+    const places = this.trip?.places;
+    if (!places || places.length < 2) return;
+
+    const validPlaces = places.filter(
+      (p: { latitude: any; longitude: any }) => p.latitude && p.longitude
+    );
+
+    const waypoints = validPlaces
+      .slice(1, -1)
+      .map((place: { latitude: any; longitude: any }) => ({
+        location: { lat: place.latitude, lng: place.longitude },
+        stopover: true,
+      }));
+
+    const request: google.maps.DirectionsRequest = {
+      origin: { lat: validPlaces[0].latitude, lng: validPlaces[0].longitude },
+      destination: {
+        lat: validPlaces[validPlaces.length - 1].latitude,
+        lng: validPlaces[validPlaces.length - 1].longitude,
+      },
+      waypoints,
+      travelMode: google.maps.TravelMode.DRIVING,
+    };
+
+    this.mapDirectionsService.route(request).subscribe((res) => {
+      this.directionsResults = res.result || undefined;
+    });
+  }
+
+  getSelectedEmoji() {
+    return this.emojiOptions.find((e) => e.id === this.trip.tripEmoji);
+  }
+
   redirectToEditTrip() {
-    this.router.navigate(['/layout/edit-trip']);
+    this.router.navigate(['/layout/edit-trip', this.trip.id]);
+  }
+
+  deleteTrip() {
+    this.tripService.deleteTrip(this.trip.id).subscribe({
+      next: (response) => {
+        console.log('Trip deleted successfully', response);
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Error deleting trip', error);
+      },
+    });
+  }
+
+  get tripDateRange(): string {
+    const from = new Date(this.trip.dateFrom).toLocaleDateString();
+    const to = new Date(this.trip.dateTo).toLocaleDateString();
+    return `${from} – ${to}`;
+  }
+
+  get visiblePlaces() {
+    return this.trip.places?.slice(0, 3) || [];
+  }
+
+  get remainingPlacesCount() {
+    return Math.max(0, (this.trip.places?.length || 0) - 3);
   }
 
   ngOnDestroy(): void {

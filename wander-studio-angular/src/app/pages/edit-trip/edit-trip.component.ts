@@ -67,16 +67,18 @@ export class EditTripComponent {
   ) {}
 
   trip: TripDto | null = null;
-  tripId: number | null = null;
+  tripId!: number;
 
   ngOnInit(): void {
+    this.tripId = Number(this.route.snapshot.paramMap.get('id'));
+
     this.loadFriends();
     this.getRoute();
-    this.loadTrip(1); //todo refactor that
+    this.loadTrip();
   }
 
-  loadTrip(tripId: number): void {
-    this.tripService.getTripById(tripId).subscribe({
+  loadTrip(): void {
+    this.tripService.getTripById(this.tripId).subscribe({
       next: (response) => {
         if (response.data) {
           this.trip = response.data;
@@ -155,7 +157,7 @@ export class EditTripComponent {
     };
 
     console.log('Trip Payload:', payload);
-    this.tripService.updateTrip(payload, 1).subscribe({
+    this.tripService.updateTrip(payload, this.tripId).subscribe({
       next: (res) => {
         alert(res.message);
         // Optionally navigate to another page or show a success message

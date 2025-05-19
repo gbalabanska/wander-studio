@@ -26,7 +26,7 @@ CREATE TABLE `trip` (
     `date_from` DATE NOT NULL,
     `date_to` DATE NOT NULL,
     `trip_emoji` VARCHAR(50),
-    `description` TEXT
+    `description` VARCHAR(1000)
 );
 
 CREATE TABLE `trip_member` (

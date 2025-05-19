@@ -13,6 +13,11 @@ export class TripService {
 
   constructor(private http: HttpClient) {}
 
+  getAllTrips(): Observable<ApiResponse<TripDto[]>> {
+    return this.http.get<ApiResponse<TripDto[]>>(this.baseUrl, {
+      withCredentials: true,
+    });
+  }
   // Get trip by ID
   getTripById(tripId: number): Observable<ApiResponse<TripDto>> {
     const url = `${this.baseUrl}/${tripId}`;
@@ -24,10 +29,16 @@ export class TripService {
       withCredentials: true,
     });
   }
+
   updateTrip(newTrip: TripDto, tripId: number): Observable<ApiResponse<void>> {
     const url = `${this.baseUrl}/${tripId}`;
     return this.http.put<ApiResponse<void>>(url, newTrip, {
       withCredentials: true,
     });
+  }
+
+  deleteTrip(tripId: number): Observable<ApiResponse<void>> {
+    const url = `${this.baseUrl}/${tripId}`;
+    return this.http.delete<ApiResponse<void>>(url, { withCredentials: true });
   }
 }
