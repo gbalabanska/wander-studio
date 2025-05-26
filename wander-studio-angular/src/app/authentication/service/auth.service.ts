@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environment/environment';
+import { TokenTimerService } from './token-timer.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class AuthService {
   private usernameSubject: BehaviorSubject<string | null>;
   username$: Observable<string | null>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private tokenTimer: TokenTimerService) {
     const storedUsername = sessionStorage.getItem('username');
     this.usernameSubject = new BehaviorSubject<string | null>(storedUsername);
     this.username$ = this.usernameSubject.asObservable();
@@ -40,17 +41,34 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return this.http
-      .post(
+      .post<{ data: any; message: string }>(
         `${this.baseUrl}/generateToken`,
         { username, password },
         { withCredentials: true }
       )
       .pipe(
-        tap(() => {
-          console.log(`User ${username} logged in successfully.`);
-          this.setUsername(username); // <== use setUsername() instead
+        tap((res) => {
+          this.setUsername(username);
+
+          const expiresAt = res.data?.expiresAt;
+          if (expiresAt) {
+            this.tokenTimer.startCountdown(expiresAt);
+          }
         })
       );
+  }
+
+  refreshToken(): Observable<any> {
+    const username = this.usernameSubject.getValue();
+    if (!username) {
+      throw new Error('Username is not set');
+    }
+
+    return this.http.post(
+      `${this.baseUrl}/refreshToken/${encodeURIComponent(username)}`,
+      {}, // no body needed
+      { withCredentials: true }
+    );
   }
 
   logout(): Observable<any> {

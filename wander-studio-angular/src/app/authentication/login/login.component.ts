@@ -60,10 +60,4 @@ export class LoginComponent implements OnInit {
       });
     }
   }
-
-  /*
-  TODO:
-  - protect pages from unauthenticated users
-  - proper log out and cookie deletion
-  */
 }

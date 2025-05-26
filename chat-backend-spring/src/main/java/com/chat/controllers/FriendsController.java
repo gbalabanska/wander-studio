@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/friends")
 public class FriendsController {
 
-
     @Autowired
     CookieExtractor cookieExtractor;
     @Autowired
@@ -29,7 +28,6 @@ public class FriendsController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        //TODO: remove current user from friend list !!!!!!!!!!!
         int userId = cookieExtractor.extractUserId(request);
         Pageable pageable = PageRequest.of(page, size);
 

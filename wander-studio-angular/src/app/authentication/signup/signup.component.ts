@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
@@ -23,7 +23,7 @@ export class SignupComponent {
   onSubmit() {
     // Call the signup service to send the POST request
     this.authService.signup(this.user).subscribe({
-      next: (response) => {
+      next: () => {
         console.log('User created successfully!');
         alert('Sign up successful!');
         this.router.navigate(['/login']);

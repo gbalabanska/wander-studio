@@ -64,48 +64,6 @@ export class NewTripComponent {
   ) {}
   ngOnInit() {
     this.loadFriends();
-
-    // // Add 9 mock places for testing
-    // this.fromPlaces = [
-    //   {
-    //     address: 'New York, NY',
-    //     location: new google.maps.LatLng(40.7128, -74.006),
-    //   },
-    //   {
-    //     address: 'Los Angeles, CA',
-    //     location: new google.maps.LatLng(34.0522, -118.2437),
-    //   },
-    //   {
-    //     address: 'Chicago, IL',
-    //     location: new google.maps.LatLng(41.8781, -87.6298),
-    //   },
-    //   {
-    //     address: 'Houston, TX',
-    //     location: new google.maps.LatLng(29.7604, -95.3698),
-    //   },
-    //   {
-    //     address: 'Phoenix, AZ',
-    //     location: new google.maps.LatLng(33.4484, -112.074),
-    //   },
-    //   {
-    //     address: 'Philadelphia, PA',
-    //     location: new google.maps.LatLng(39.9526, -75.1652),
-    //   },
-    //   {
-    //     address: 'San Antonio, TX',
-    //     location: new google.maps.LatLng(29.4241, -98.4936),
-    //   },
-    //   {
-    //     address: 'San Diego, CA',
-    //     location: new google.maps.LatLng(32.7157, -117.1611),
-    //   },
-    //   {
-    //     address: 'Dallas, TX',
-    //     location: new google.maps.LatLng(32.7767, -96.797),
-    //   },
-    // ];
-
-    // Optionally trigger route calculation
     this.getRoute();
   }
 
@@ -215,23 +173,25 @@ export class NewTripComponent {
     });
   }
 
-  // Move item up in the list
   moveUp(index: number) {
-    if (index > 0) {
-      const temp = this.fromPlaces[index];
-      this.fromPlaces[index] = this.fromPlaces[index - 1];
-      this.fromPlaces[index - 1] = temp;
-      this.getRoute(); // Recalculate the route after movement
+    const globalIndex = this.placePageNumber * this.placesPerPage + index;
+    if (globalIndex > 0) {
+      [this.fromPlaces[globalIndex], this.fromPlaces[globalIndex - 1]] = [
+        this.fromPlaces[globalIndex - 1],
+        this.fromPlaces[globalIndex],
+      ];
+      this.getRoute();
     }
   }
 
-  // Move item down in the list
   moveDown(index: number) {
-    if (index < this.fromPlaces.length - 1) {
-      const temp = this.fromPlaces[index];
-      this.fromPlaces[index] = this.fromPlaces[index + 1];
-      this.fromPlaces[index + 1] = temp;
-      this.getRoute(); // Recalculate the route after movement
+    const globalIndex = this.placePageNumber * this.placesPerPage + index;
+    if (globalIndex < this.fromPlaces.length - 1) {
+      [this.fromPlaces[globalIndex], this.fromPlaces[globalIndex + 1]] = [
+        this.fromPlaces[globalIndex + 1],
+        this.fromPlaces[globalIndex],
+      ];
+      this.getRoute();
     }
   }
 

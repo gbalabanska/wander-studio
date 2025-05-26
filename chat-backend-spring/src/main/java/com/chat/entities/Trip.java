@@ -26,6 +26,7 @@ public class Trip {
     @Column(name = "trip_emoji")
     private String tripEmoji;
 
+    @Column(length = 1000)
     private String description;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)

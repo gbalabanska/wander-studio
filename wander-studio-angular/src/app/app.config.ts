@@ -7,14 +7,15 @@ import {
   NoopAnimationsModule,
   provideAnimations,
 } from '@angular/platform-browser/animations';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { ErrorInterceptor } from './authentication/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimations(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([ErrorInterceptor])),
     BrowserAnimationsModule,
     NoopAnimationsModule,
   ],

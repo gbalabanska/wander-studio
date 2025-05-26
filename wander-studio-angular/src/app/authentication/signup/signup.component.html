@@ -1,8 +1,22 @@
-<div class="signup-wrapper">
-  <div class="signup-header">
-    <h2>✨ Create Your Chat-Mat Account</h2>
-  </div>
-  <div class="signup-form-container">
+<div class="login-wrapper">
+  <div
+    class="login-image"
+    aria-label="Wander Studio scenic image"
+    role="img"
+  ></div>
+
+  <div class="login-form-container">
+    <div class="login-header">
+      <div class="logo">
+        <img src="logo.jpg" alt="Wander Studio Logo" />
+      </div>
+
+      <h1>Join <span class="app-name">Wander Studio</span></h1>
+      <p class="description">
+        Create your account to connect with friends and plan amazing trips!
+      </p>
+    </div>
+
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">👤 Username:</label>
@@ -12,6 +26,7 @@
           name="username"
           required
           class="form-control"
+          style="max-width: 350px"
         />
       </div>
 
@@ -24,6 +39,7 @@
           type="email"
           required
           class="form-control"
+          style="max-width: 350px"
         />
       </div>
 
@@ -36,10 +52,276 @@
           type="password"
           required
           class="form-control"
+          style="max-width: 350px"
         />
       </div>
 
-      <button type="submit" class="btn-signup">🚀 Sign Up</button>
+      <button type="submit" class="btn-login">🚀 Sign Up</button>
     </form>
+
+    <p class="signup-text">Already have an account? 🎉</p>
+    <div class="signup-link">
+      <a routerLink="/login">Login here!</a>
+    </div>
   </div>
 </div>
+
+<style>
+  :root {
+    --orange-pink: #e77278;
+    --orange-red: #ac3457;
+    --dark-purpl: #1e274e;
+    --brownish-yellow: #edbd8c;
+    --text-dark: #2c2c2c;
+    --text-light: #666;
+    --bg-form: #f9f9ff;
+    --btn-gradient: linear-gradient(
+      90deg,
+      var(--orange-red),
+      var(--orange-pink)
+    );
+  }
+
+  :host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+    background: radial-gradient(circle, #e6dbdb 0%, #e6dbdb 40%, #ffffff 100%);
+  }
+
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: #f0f2f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .login-wrapper {
+    display: flex;
+    max-width: 900px;
+    width: 90vw;
+    height: 900px;
+    background: #ffffff;
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+
+  .login-form-container {
+    flex: 1;
+    padding: 3rem;
+    display: flex; /* Make it a flex container */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    background: var(--bg-form);
+    color: var(--text-dark);
+    /* Changed border-radius to align to the right side */
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-top-left-radius: 0; /* Remove left radius */
+    border-bottom-left-radius: 0; /* Remove left radius */
+    text-align: center; /* Ensure text within the header is centered */
+  }
+
+  .logo {
+    margin-bottom: 2rem;
+    /* `text-align: center;` is already handled by parent `align-items: center;` */
+  }
+
+  .logo img {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--orange-red);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+  }
+
+  .logo img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px var(--orange-pink);
+  }
+
+  h1 {
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    /* `text-align: center;` is already handled by parent `align-items: center;` */
+  }
+
+  .app-name {
+    background: linear-gradient(
+      45deg,
+      var(--orange-pink),
+      var(--orange-red),
+      var(--dark-purpl),
+      var(--brownish-yellow)
+    );
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: gradient-animation 5s ease infinite;
+  }
+
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .login-header {
+    /* `text-align: center;` is already handled by parent `align-items: center;` */
+    margin-bottom: 2rem;
+  }
+
+  .login-header h2 {
+    font-size: 2rem;
+    color: var(--text-dark);
+  }
+
+  form {
+    width: 100%; /* Important: allow form to take full width for centering its children */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center form elements like inputs and button */
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    width: 100%; /* Ensure form-group takes full width of the form */
+    display: flex; /* Use flex to center label and input within the group */
+    flex-direction: column; /* Stack label and input vertically */
+    align-items: center; /* Center items within form-group initially */
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    width: 350px; /* Give the label a defined width to align with inputs */
+    text-align: left; /* Align label text to the left within its allocated width */
+  }
+
+  input.form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+    background: #fff;
+    color: var(--text-dark);
+    /* max-width: 350px; */
+  }
+
+  input:focus {
+    border-color: #999;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Reusing .btn-login for the signup button for consistent styling */
+  .btn-login {
+    margin-top: 1rem;
+    width: 100%; /* Take full width of its parent (form) */
+    max-width: 350px; /* Limit its maximum width */
+    padding: 0.85rem 0;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(90deg, var(--orange-pink), var(--orange-red));
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.4s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  }
+
+  .btn-login:hover {
+    background: linear-gradient(to right, #e5533e, var(--orange-red));
+  }
+
+  .signup-text {
+    margin-top: 2rem;
+    color: var(--text-light);
+    font-size: 1rem;
+  }
+
+  .signup-link {
+    margin-top: 0.5rem;
+  }
+
+  .signup-link a {
+    background: #555;
+    color: white;
+    padding: 0.6rem 1.8rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+  }
+
+  .signup-link a:hover {
+    background: #333;
+  }
+
+  .login-image {
+    flex: 1;
+    background: url("table-inverted.jpg") center/cover no-repeat;
+    /* Changed border-radius to align to the left side */
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-top-right-radius: 0; /* Remove right radius */
+    border-bottom-right-radius: 0; /* Remove right radius */
+    filter: brightness(1.08) saturate(1.2);
+    background-blend-mode: lighten;
+    transition: filter 0.3s ease;
+  }
+
+  .login-image:hover {
+    filter: brightness(1);
+  }
+
+  @media (max-width: 768px) {
+    .login-wrapper {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .login-image {
+      height: 250px;
+      /* Reverted border-radius for mobile as it stacks vertically */
+      border-radius: 0 0 25px 25px;
+    }
+
+    .login-form-container {
+      /* Reverted border-radius for mobile as it stacks vertically */
+      border-radius: 25px 25px 0 0;
+      padding: 2rem;
+    }
+
+    /* Adjustments for smaller screens to maintain centering */
+    .form-group {
+      align-items: center; /* Center items within form-group on small screens */
+    }
+
+    label {
+      text-align: center; /* Center label text on smaller screens */
+      width: auto; /* Allow label width to adjust */
+    }
+  }
+</style>

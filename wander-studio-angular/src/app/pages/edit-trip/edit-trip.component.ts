@@ -230,21 +230,24 @@ export class EditTripComponent {
 
   // Move item up in the list
   moveUp(index: number) {
-    if (index > 0) {
-      const temp = this.fromPlaces[index];
-      this.fromPlaces[index] = this.fromPlaces[index - 1];
-      this.fromPlaces[index - 1] = temp;
-      this.getRoute(); // Recalculate the route after movement
+    const globalIndex = this.placePageNumber * this.placesPerPage + index;
+    if (globalIndex > 0) {
+      [this.fromPlaces[globalIndex], this.fromPlaces[globalIndex - 1]] = [
+        this.fromPlaces[globalIndex - 1],
+        this.fromPlaces[globalIndex],
+      ];
+      this.getRoute();
     }
   }
 
-  // Move item down in the list
   moveDown(index: number) {
-    if (index < this.fromPlaces.length - 1) {
-      const temp = this.fromPlaces[index];
-      this.fromPlaces[index] = this.fromPlaces[index + 1];
-      this.fromPlaces[index + 1] = temp;
-      this.getRoute(); // Recalculate the route after movement
+    const globalIndex = this.placePageNumber * this.placesPerPage + index;
+    if (globalIndex < this.fromPlaces.length - 1) {
+      [this.fromPlaces[globalIndex], this.fromPlaces[globalIndex + 1]] = [
+        this.fromPlaces[globalIndex + 1],
+        this.fromPlaces[globalIndex],
+      ];
+      this.getRoute();
     }
   }
 

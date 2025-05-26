@@ -4,17 +4,18 @@ import { Observable } from 'rxjs';
 import { AuthService } from '../../authentication/service/auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { SessionTimerComponent } from '../../authentication/session-timer/session-timer.component';
 
 @Component({
   selector: 'app-side-menu',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, SessionTimerComponent],
   template: `
     <nav class="side-menu">
       <!-- App Name and Logo -->
       <div class="app-header lavander-bubble">
         <div class="logo">
-          <img src="mountain-purple-orange-2.JPG" alt="Logo" class="app-logo" />
+          <img src="logo.jpg" alt="Logo" class="app-logo" />
         </div>
         <h1 class="app-name">Wander Studio</h1>
       </div>
@@ -41,6 +42,7 @@ import { RouterModule } from '@angular/router';
       </div>
 
       <div class="bottom-content">
+        <app-session-timer style="margin-bottom: 40px;"></app-session-timer>
         <button class="logout-btn" (click)="logout()">Log Out 👋</button>
       </div>
     </nav>

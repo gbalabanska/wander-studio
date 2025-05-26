@@ -6,6 +6,11 @@ import com.chat.dto.AuthRequest;
 import com.chat.entities.User;
 import com.chat.services.JwtService;
 import com.chat.services.UserInfoService;
+import com.chat.util.CookieExtractor;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.*;
-import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthUserController {
-
+    @Autowired
+    CookieExtractor cookieExtractor;
     @Autowired
     private UserInfoService service;
 
@@ -67,10 +69,8 @@ public class AuthUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//TODO: da ne se pozvolqwa potrebitel sus sushiq USERNAME!!!!!
     @PostMapping("/addNewUser")
     public ResponseEntity<Map<String, String>> addNewUser(@Valid @RequestBody AddNewUserRequest newUserDTO) {
-        // Form new user from DTO
         User newUser = new User();
         newUser.setUsername(newUserDTO.getUsername());
         newUser.setEmail(newUserDTO.getEmail());
@@ -82,39 +82,67 @@ public class AuthUserController {
 
         // Create a map to return as JSON response
         Map<String, String> response = new HashMap<>();
-        response.put("message", result);  // Example: {"message": "User Added"}
+        response.put("message", result);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);  // Returns JSON response with HTTP status 200 (OK)
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/generateToken")
-    public ResponseEntity<Map<String, String>> authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> authenticateAndGetToken(
+            @RequestBody AuthRequest authRequest,
+            HttpServletResponse response
+    ) {
         // Authenticate the user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
 
         if (authentication.isAuthenticated()) {
-            // Generate the JWT token
             String token = jwtService.generateToken(authRequest.getUsername());
 
-            // Create the cookie with HttpOnly and Secure flags
+            // Create cookie
             Cookie cookie = new Cookie("token", token);
-            cookie.setHttpOnly(true);  // Makes the cookie inaccessible to JavaScript
-            cookie.setSecure(true);    // Ensures cookie is only sent over HTTPS
-            cookie.setPath("/");       // The cookie is available for all paths on the domain
-            cookie.setMaxAge(24 * 60 * 60); // Expire in 24 hours (adjust as needed)
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(30 * 60); // 30 minutes
 
-            // Add the cookie to the response
             response.addCookie(cookie);
 
-            // Return a success message
-            Map<String, String> responseBody = new HashMap<>();
+            // Calculate times
+            long currentMillis = System.currentTimeMillis();
+            long expirationMillis = currentMillis + (30 * 60 * 1000); // 30 min in ms
+
+            // Prepare response body
+            Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("message", "Authentication successful. Token stored in cookie.");
-            return new ResponseEntity<>(responseBody, HttpStatus.OK);
+            responseBody.put("issuedAt", currentMillis);
+            responseBody.put("expiresAt", expirationMillis);
+
+            return ResponseEntity.ok(new ApiResponse<>(responseBody, "Login successful"));
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
+    }
+
+    @PostMapping("/refreshToken/{username}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> refreshToken(@PathVariable String username, HttpServletResponse response) {
+
+        String refreshToken = jwtService.generateToken(username);
+
+        Cookie newCookie = new Cookie("token", refreshToken);
+        newCookie.setHttpOnly(true);
+        newCookie.setSecure(true);
+        newCookie.setPath("/");
+        newCookie.setMaxAge(30 * 60); // 30 minutes
+        response.addCookie(newCookie);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", "Token refreshed");
+        data.put("issuedAt", System.currentTimeMillis());
+        data.put("expiresAt", System.currentTimeMillis() + 30 * 60 * 1000);
+
+        return ResponseEntity.ok(new ApiResponse<>(data, "Token refreshed successfully", true));
     }
 
     @PostMapping("/logout")
