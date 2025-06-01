@@ -161,6 +161,7 @@ export class EditTripComponent {
       next: (res) => {
         alert(res.message);
         // Optionally navigate to another page or show a success message
+        this.router.navigate(['/layout/dashboard']);
       },
       error: (err) => {
         console.error('Error creating trip:', err);

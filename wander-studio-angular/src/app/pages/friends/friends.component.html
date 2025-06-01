@@ -16,15 +16,6 @@
 <div class="container" [@slideInFromTop]>
   <!-- Search Friends -->
   <section class="trip-section search-section">
-    <!-- todo: search names like %test% and return more than one result
-<<<<<<< HEAD
-
-     да не може потребителя сам да се добаив като приятел
-     
-=======
-     да не може потребителя сам да се добаив като приятел
->>>>>>> 9379141483e21a461435b6dc52052a238c2abc8a
-     снимки за м/ж/д -->
     <h2>Search Friends 🔍</h2>
     <div class="input-group">
       <label class="search-text" for="search">Search by Username</label>
@@ -45,6 +36,8 @@
     <ul class="search-dropdown" *ngIf="foundUser">
       <li>
         <img
+          width="60"
+          style="border-radius: 50%"
           [src]="foundUser.gender === 'M' ? 'm.png' : 'w.png'"
           alt="avatar"
         />
@@ -103,7 +96,8 @@
             <img
               [src]="friend.gender === 'M' ? 'm.png' : 'w.png'"
               alt="avatar"
-              width="40"
+              width="60"
+              style="border-radius: 50%"
             />
           </td>
           <td>{{ friend.username }}</td>

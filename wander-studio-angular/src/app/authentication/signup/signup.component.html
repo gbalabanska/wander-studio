@@ -7,14 +7,11 @@
 
   <div class="login-form-container">
     <div class="login-header">
-      <div class="logo">
+      <div class="logo" style="user-select: none">
         <img src="logo.jpg" alt="Wander Studio Logo" />
       </div>
 
       <h1>Join <span class="app-name">Wander Studio</span></h1>
-      <p class="description">
-        Create your account to connect with friends and plan amazing trips!
-      </p>
     </div>
 
     <form (ngSubmit)="onSubmit()">
@@ -54,6 +51,33 @@
           class="form-control"
           style="max-width: 350px"
         />
+      </div>
+
+      <div class="form-group gender-radio-group">
+        <label>👤 Gender:</label>
+        <div class="radio-options">
+          <label class="radio-option">
+            <input
+              type="radio"
+              [(ngModel)]="user.gender"
+              name="gender"
+              value="M"
+              required
+            />
+            👨 Male
+          </label>
+
+          <label class="radio-option">
+            <input
+              type="radio"
+              [(ngModel)]="user.gender"
+              name="gender"
+              value="F"
+              required
+            />
+            👩 Female
+          </label>
+        </div>
       </div>
 
       <button type="submit" class="btn-login">🚀 Sign Up</button>
@@ -199,7 +223,7 @@
   }
 
   .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     width: 100%; /* Ensure form-group takes full width of the form */
     display: flex; /* Use flex to center label and input within the group */
     flex-direction: column; /* Stack label and input vertically */
@@ -320,6 +344,90 @@
     }
 
     label {
+      text-align: center; /* Center label text on smaller screens */
+      width: auto; /* Allow label width to adjust */
+    }
+  }
+
+  /* Add this to your existing styles or in your component's CSS file */
+
+  .gender-radio-group {
+    /* Inherits existing form-group styles */
+    margin-bottom: 1.5rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .radio-options {
+    display: flex; /* Make the options display in a row */
+    width: 350px; /* Align with the max-width of other inputs */
+    justify-content: center; /* Center the radio options within their container */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens if necessary */
+  }
+
+  .radio-option {
+    display: flex;
+    align-items: center; /* Vertically align the radio button and text */
+    cursor: pointer;
+    font-weight: 500; /* Slightly less bold than the label for inputs */
+    color: var(--text-dark);
+  }
+
+  .radio-option input[type="radio"] {
+    margin-right: 8px; /* Space between the radio button and its label text */
+    /* You can add custom styling for the radio button itself if desired */
+    -webkit-appearance: none; /* Remove default browser styling */
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px; /* Custom size for radio button */
+    height: 18px;
+    border: 2px solid var(--orange-red);
+    border-radius: 50%; /* Make it circular */
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .radio-option input[type="radio"]::before {
+    content: "";
+    display: block;
+    width: 10px; /* Inner circle size */
+    height: 10px;
+    background-color: var(--orange-red);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0); /* Hide initially */
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .radio-option input[type="radio"]:checked::before {
+    transform: translate(-50%, -50%) scale(1); /* Show when checked */
+  }
+
+  .radio-option input[type="radio"]:hover {
+    border-color: var(--orange-pink); /* Hover effect */
+  }
+
+  /* Adjustments for labels within form-group for consistency */
+  .form-group label {
+    text-align: left; /* Keep labels left-aligned to match input fields */
+    width: 350px; /* Match the max-width of inputs */
+  }
+
+  /* Media query adjustments for smaller screens */
+  @media (max-width: 768px) {
+    .radio-options {
+      flex-direction: column; /* Stack radio buttons vertically on small screens */
+      align-items: flex-start; /* Align them to the start */
+      width: auto; /* Let width adjust naturally */
+    }
+
+    .form-group label {
       text-align: center; /* Center label text on smaller screens */
       width: auto; /* Allow label width to adjust */
     }

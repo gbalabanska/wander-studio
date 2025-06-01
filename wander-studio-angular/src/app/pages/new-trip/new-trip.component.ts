@@ -291,4 +291,6 @@ export class NewTripComponent {
   getMapLabel(index: number): string {
     return String.fromCharCode(65 + index);
   }
+
+  //TODO: fix styling like edit page
 }

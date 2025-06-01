@@ -10,19 +10,15 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(): Observable<boolean> {
-    return this.authService.username$.pipe(
-      map((username) => {
-        if (username) {
-          // User is authenticated
-          return true;
+    return this.authService.user$.pipe(
+      map((user) => {
+        if (user) {
+          return true; // User is authenticated
         } else {
-          // No username -> Redirect to login
           this.router.navigate(['/login']);
-          return false;
+          return false; // Not authenticated
         }
       })
     );
   }
-
-  //todo: handle expired token and redirect to login page, make BE return 401 unauthorized
 }

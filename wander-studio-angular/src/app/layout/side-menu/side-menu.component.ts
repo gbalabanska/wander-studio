@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router'; // <-- ADD THIS
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../authentication/service/auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SessionTimerComponent } from '../../authentication/session-timer/session-timer.component';
+import { User } from '../../../models/dto/dtos';
 
 @Component({
   selector: 'app-side-menu',
@@ -14,7 +15,7 @@ import { SessionTimerComponent } from '../../authentication/session-timer/sessio
     <nav class="side-menu">
       <!-- App Name and Logo -->
       <div class="app-header lavander-bubble">
-        <div class="logo">
+        <div class="logo" style="user-select: none">
           <img src="logo.jpg" alt="Logo" class="app-logo" />
         </div>
         <h1 class="app-name">Wander Studio</h1>
@@ -24,21 +25,45 @@ import { SessionTimerComponent } from '../../authentication/session-timer/sessio
       />
 
       <!-- User Profile -->
-      <div class="user-profile">
-        <img class="profile-img" src="face.jpg" alt="User" />
-        <div class="user-info">
-          <span class="user-name">{{ username$ | async }}</span>
-          <span class="user-role">Adventure Enthusiast</span>
+      <div class="user-profile" *ngIf="user$ | async as user">
+        <img
+          class="profile-img"
+          [src]="user.gender === 'F' ? 'w.png' : 'm.png'"
+          alt="User"
+        />
+        <div
+          class="user-info"
+          style="display: flex; flex-direction: column; overflow: hidden; max-width: 100%;"
+        >
+          <span
+            class="user-name"
+            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+            >{{ user.username }}</span
+          >
+          <span
+            class="user-role"
+            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+            >{{
+              user.gender === 'F' ? 'Explorer Queen' : 'Adventure Enthusiast'
+            }}</span
+          >
+          <span
+            class="user-email"
+            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+            >{{ user.email }}</span
+          >
         </div>
       </div>
 
       <!-- Menu Items -->
       <div class="menu-items">
         <a routerLink="/layout/dashboard" routerLinkActive="active"
-          >Dashboard</a
+          >🏠 Dashboard</a
         >
-        <a routerLink="/layout/new-trip" routerLinkActive="active">New Trip</a>
-        <a routerLink="/layout/friends" routerLinkActive="active">Friends</a>
+        <a routerLink="/layout/new-trip" routerLinkActive="active"
+          >🌍 New Trip</a
+        >
+        <a routerLink="/layout/friends" routerLinkActive="active">👥 Friends</a>
       </div>
 
       <div class="bottom-content">
@@ -50,20 +75,17 @@ import { SessionTimerComponent } from '../../authentication/session-timer/sessio
   styleUrls: ['./side-menu.component.scss'],
 })
 export class SideMenuComponent implements OnInit {
-  username$!: Observable<string | null>;
+  user$!: Observable<User | null>;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.username$ = this.authService.username$;
+    this.user$ = this.authService.user$;
   }
 
   logout() {
     this.authService.logout().subscribe({
       next: () => {
-        // Clear session storage if you want (optional)
-
-        // Navigate to login or home page
         this.router.navigate(['/login']);
       },
       error: (error) => {

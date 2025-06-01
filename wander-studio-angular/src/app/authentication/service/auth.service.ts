@@ -3,29 +3,34 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { TokenTimerService } from './token-timer.service';
+import { LoginResponseDTO, User } from '../../../models/dto/dtos';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private baseUrl = environment.apiUrl + '/auth';
-  private usernameSubject: BehaviorSubject<string | null>;
-  username$: Observable<string | null>;
+
+  private userSubject: BehaviorSubject<User | null>;
+  user$: Observable<User | null>;
 
   constructor(private http: HttpClient, private tokenTimer: TokenTimerService) {
-    const storedUsername = sessionStorage.getItem('username');
-    this.usernameSubject = new BehaviorSubject<string | null>(storedUsername);
-    this.username$ = this.usernameSubject.asObservable();
+    const storedUser = sessionStorage.getItem('user');
+    this.userSubject = new BehaviorSubject<User | null>(
+      storedUser ? JSON.parse(storedUser) : null
+    );
+    this.user$ = this.userSubject.asObservable();
+
     console.log('AuthService initialized');
   }
 
-  setUsername(username: string | null): void {
-    if (username) {
-      sessionStorage.setItem('username', username);
+  private setUser(user: User | null): void {
+    if (user) {
+      sessionStorage.setItem('user', JSON.stringify(user));
     } else {
-      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('user');
     }
-    this.usernameSubject.next(username);
+    this.userSubject.next(user);
   }
 
   signup(user: {
@@ -41,17 +46,20 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return this.http
-      .post<{ data: any; message: string }>(
+      .post<{ data: LoginResponseDTO; message: string }>(
         `${this.baseUrl}/generateToken`,
         { username, password },
         { withCredentials: true }
       )
       .pipe(
         tap((res) => {
-          this.setUsername(username);
+          const user = res.data.user;
+          const expiresAt = res.data.expiresAt;
 
-          const expiresAt = res.data?.expiresAt;
+          this.setUser(user);
+
           if (expiresAt) {
+            sessionStorage.setItem('expiresAt', expiresAt.toString());
             this.tokenTimer.startCountdown(expiresAt);
           }
         })
@@ -59,14 +67,14 @@ export class AuthService {
   }
 
   refreshToken(): Observable<any> {
-    const username = this.usernameSubject.getValue();
-    if (!username) {
-      throw new Error('Username is not set');
+    const user = this.userSubject.getValue();
+    if (!user?.username) {
+      throw new Error('User is not set');
     }
 
     return this.http.post(
-      `${this.baseUrl}/refreshToken/${encodeURIComponent(username)}`,
-      {}, // no body needed
+      `${this.baseUrl}/refreshToken/${encodeURIComponent(user.username)}`,
+      {},
       { withCredentials: true }
     );
   }
@@ -76,7 +84,7 @@ export class AuthService {
       .post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
-          this.setUsername(null); // <== clear username properly
+          this.setUser(null);
           sessionStorage.clear();
           console.log('User logged out successfully.');
         })

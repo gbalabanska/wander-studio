@@ -3,11 +3,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../service/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RouterLink],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink, CommonModule],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
@@ -15,6 +16,7 @@ export class SignupComponent {
   user = {
     username: '',
     password: '',
+    gender: '',
     email: '',
     roles: 'ROLE_USER', // Fixed role
   };
@@ -43,6 +45,7 @@ export class SignupComponent {
       },
     });
   }
-  //todo адд гендер
-  //стайл формы логн/сигнин
+  selectGender(gender: string) {
+    this.user.gender = gender;
+  }
 }

@@ -1,3 +1,9 @@
+export interface LoginResponseDTO {
+  user: User;
+  issuedAt: number;
+  expiresAt: number;
+}
+
 export interface User {
   id: number;
   username: string;

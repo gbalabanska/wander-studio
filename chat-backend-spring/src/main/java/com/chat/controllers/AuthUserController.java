@@ -1,11 +1,10 @@
 package com.chat.controllers;
 
-import com.chat.dto.AddNewUserRequest;
-import com.chat.dto.ApiResponse;
-import com.chat.dto.AuthRequest;
+import com.chat.dto.*;
 import com.chat.entities.User;
 import com.chat.services.JwtService;
 import com.chat.services.UserInfoService;
+import com.chat.services.UserService;
 import com.chat.util.CookieExtractor;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +36,9 @@ public class AuthUserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/welcome")
     public ResponseEntity<Map<String, String>> welcome(HttpServletRequest request) {
@@ -88,38 +90,37 @@ public class AuthUserController {
     }
 
     @PostMapping("/generateToken")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> authenticateAndGetToken(
+    public ResponseEntity<ApiResponse<LoginResponse>> authenticateAndGetToken(
             @RequestBody AuthRequest authRequest,
             HttpServletResponse response
     ) {
-        // Authenticate the user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
 
         if (authentication.isAuthenticated()) {
-            String token = jwtService.generateToken(authRequest.getUsername());
+            User user = userService.getUserByUsername(authRequest.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-            // Create cookie
+            String token = jwtService.generateToken(user.getUsername());
+
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
             cookie.setPath("/");
-            cookie.setMaxAge(30 * 60); // 30 minutes
-
+            cookie.setMaxAge(30 * 60);
             response.addCookie(cookie);
 
-            // Calculate times
-            long currentMillis = System.currentTimeMillis();
-            long expirationMillis = currentMillis + (30 * 60 * 1000); // 30 min in ms
+            long issuedAt = System.currentTimeMillis();
+            long expiresAt = issuedAt + 30 * 60 * 1000;
 
-            // Prepare response body
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("message", "Authentication successful. Token stored in cookie.");
-            responseBody.put("issuedAt", currentMillis);
-            responseBody.put("expiresAt", expirationMillis);
+            LoginResponse loginDTO = new LoginResponse(new UserDTO(
+                    user.getId(), user.getUsername(), user.getGender(), user.getEmail()),
+                    issuedAt,
+                    expiresAt
+            );
 
-            return ResponseEntity.ok(new ApiResponse<>(responseBody, "Login successful"));
+            return ResponseEntity.ok(new ApiResponse<>(loginDTO, "Login successful"));
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
