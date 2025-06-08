@@ -82,6 +82,7 @@ export class TripViewComponent implements OnInit, OnDestroy {
         window.location.reload();
       },
       error: (error) => {
+        alert('Error deleting trip. Only the owner can delete a trip.');
         console.error('Error deleting trip', error);
       },
     });

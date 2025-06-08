@@ -292,5 +292,5 @@ export class NewTripComponent {
     return String.fromCharCode(65 + index);
   }
 
-  //TODO: fix styling like edit page
+  //TODO: fix styling like edit page, chat package java
 }

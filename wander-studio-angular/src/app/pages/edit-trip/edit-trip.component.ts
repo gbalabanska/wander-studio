@@ -164,8 +164,8 @@ export class EditTripComponent {
         this.router.navigate(['/layout/dashboard']);
       },
       error: (err) => {
-        console.error('Error creating trip:', err);
-        alert('Error creating trip!');
+        alert('Error editing trip. Only owner/admin can update.');
+        console.log('Error creating trip!', err);
         // Handle error (e.g., show a message to the user)
       },
     });
