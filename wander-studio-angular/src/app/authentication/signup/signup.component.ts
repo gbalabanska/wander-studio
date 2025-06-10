@@ -16,10 +16,10 @@ import { ApiResponse } from '../../../models/reponse/api-response.model';
 export class SignupComponent {
   // User model for the form
   user = {
-    username: '',
-    email: '',
-    password: '',
-    gender: '',
+    username: 'Gabby Balabanska',
+    email: 'gabby@example.com',
+    password: '123456',
+    gender: 'F',
     roles: 'ROLE_USER',
   };
 
@@ -43,9 +43,9 @@ export class SignupComponent {
         this.router.navigate(['/login']);
       },
       error: (error: HttpErrorResponse) => {
+        alert('An error occurred during signup. Please try again.');
         if (error.error && error.error.message) {
           console.error('Signup error:', error.error.message);
-          alert(error.error.message);
         }
       },
     });

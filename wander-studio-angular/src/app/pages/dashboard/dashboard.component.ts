@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; // Import OnInit
 import { RouterModule } from '@angular/router';
 import { TripViewComponent } from '../trip-view/trip-view.component';
 import { TripService } from '../../services/trip.service';
@@ -42,7 +42,21 @@ import { TripDto } from '../../../models/dto/dtos';
     />
 
     <div class="container" [@slideInFromTop]>
-      <app-trip-view *ngFor="let trip of trips" [trip]="trip"></app-trip-view>
+      <ng-container *ngIf="trips && trips.length > 0; else noTrips">
+        <app-trip-view *ngFor="let trip of trips" [trip]="trip"></app-trip-view>
+      </ng-container>
+
+      <ng-template #noTrips>
+        <div class="no-trips-message">
+          <p>
+            No trip available, try creating first, or ask your friends to add
+            you
+          </p>
+          <button routerLink="/layout/new-trip" class="create-trip-button">
+            🌍 Create New Trip
+          </button>
+        </div>
+      </ng-template>
     </div>
   `,
   styles: [
@@ -95,11 +109,42 @@ import { TripDto } from '../../../models/dto/dtos';
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
+
+      .no-trips-message {
+        text-align: center;
+        padding: 30px;
+        font-size: 1.2em;
+        color: #555;
+        background-color: #f8f8f8;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+
+      .no-trips-message p {
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+
+      .create-trip-button {
+        background-color: #ac3457;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+      }
+
+      .create-trip-button:hover {
+        background-color: #8e2b49;
+      }
     `,
   ],
 })
-export class DashboardComponent {
-  trips: TripDto[] | null = [];
+export class DashboardComponent implements OnInit {
+  // Implement OnInit
+  trips: TripDto[] | null = null; // Initialize as null to differentiate between no data loaded and empty array
 
   constructor(private tripService: TripService) {}
 
@@ -110,6 +155,7 @@ export class DashboardComponent {
       },
       error: (err) => {
         console.error('Error fetching trips', err);
+        this.trips = []; // Set to empty array on error to display the message
       },
     });
   }

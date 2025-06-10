@@ -2,52 +2,51 @@
   [header]="'Create a New Trip'"
   [subtitle]="'Plan the journey, share the adventure.'"
 ></app-menu-header>
-
 <div class="container" [@slideInFromTop]>
-  <section class="first-trip-section">
+  <section>
     <div class="row-combined">
-      <div class="input-group trip-section">
-        <div class="section-header">
+      <div class="step-position step-bubble">
+        <div class="step-header">
           <h2>I. Trip Name</h2>
-          <span class="section-emoji">📝</span>
+          <span class="step-emoji">📝</span>
         </div>
         <label for="trip-name" class="step-description"
           >What should we call your trip?</label
         >
         <div class="field-row">
-          <div class="field-group">
+          <div class="field-group" style="flex-grow: 1">
             <label for="trip-name">e.g., Euro Summer 2025</label>
-            <input id="trip-name" type="text" class="input-trip-name" />
+            <input id="trip-name" type="text" />
           </div>
         </div>
       </div>
 
-      <div class="input-group trip-section">
-        <div class="section-header">
+      <div class="step-position step-bubble">
+        <div class="step-header">
           <h2>II. Travel Dates</h2>
 
-          <span class="section-emoji">📅</span>
+          <span class="step-emoji">📅</span>
         </div>
         <label for="start-date" class="step-description"
           >When will the trip happen?</label
         >
-        <div class="field-row">
-          <div class="field-group">
+        <div class="field-row" style="overflow-x: auto; gap: 10px">
+          <div>
             <label for="start-date">Start Date</label>
             <input id="start-date" type="date" />
           </div>
 
-          <div class="field-group">
+          <div>
             <label for="end-date">End Date</label>
             <input id="end-date" type="date" />
           </div>
         </div>
       </div>
 
-      <div class="input-group trip-section">
-        <div class="section-header">
+      <div class="step-position step-bubble">
+        <div class="step-header">
           <h2>III. Trip Emoji</h2>
-          <span class="section-emoji">🎨</span>
+          <span class="step-emoji">🎨</span>
         </div>
         <label for="trip-emoji" class="step-description">
           Choose an emoji that captures the vibe:
@@ -55,7 +54,11 @@
         <div class="emoji-picker">
           <!-- Emoji Picker Button now placed under the label -->
           <div class="emoji-picker-wrapper">
-            <button type="button" class="emoji-button selected-display">
+            <button
+              id="trip-emoji"
+              type="button"
+              class="emoji-button selected-display"
+            >
               <span class="emoji-symbol">
                 {{ getSelectedEmoji()?.symbol || "🎨" }}
               </span>
@@ -82,12 +85,12 @@
     </div>
   </section>
 
-  <section class="first-trip-section">
+  <section>
     <div class="row-combined">
-      <div class="input-group trip-section">
-        <div class="section-header">
+      <div class="step-position step-bubble">
+        <div class="step-header">
           <h2>IV. Invite Friends</h2>
-          <span class="section-emoji">👥</span>
+          <span class="step-emoji">👥</span>
         </div>
 
         <div class="pagination-controls">
@@ -150,10 +153,10 @@
         </table>
       </div>
 
-      <div style="min-height: 450px" class="input-group trip-section">
-        <div class="section-header">
+      <div style="min-height: 450px" class="step-position step-bubble">
+        <div class="step-header">
           <h2>V. Trip Notes</h2>
-          <span class="section-emoji">📝</span>
+          <span class="step-emoji">📝</span>
         </div>
         <label for="trip-notes" class="step-description"
           >Add ideas, links, or a short description:</label
@@ -163,10 +166,10 @@
     </div>
   </section>
 
-  <section class="trip-section">
-    <div class="section-header">
+  <section class="step-bubble">
+    <div class="step-header">
       <h2>VI. Add Stops</h2>
-      <span class="section-emoji">🗺️</span>
+      <span class="step-emoji">🗺️</span>
     </div>
 
     <!-- Instruction + Input Row -->
@@ -227,13 +230,13 @@
           </div>
         </div>
 
-        <table *ngIf="fromPlaces.length > 0" style="min-height: 450px">
+        <table *ngIf="fromPlaces.length > 0">
           <thead>
             <tr>
               <th style="padding-left: 30px">Number</th>
               <th>Location</th>
               <th>Map</th>
-              <th>Reorder / Remove</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -248,11 +251,15 @@
               <td>{{ getMapLabel(i) }}</td>
               <!-- Display Map (A, B, C, D...) -->
               <td>
-                <button class="action-btn" (click)="moveUp(i)">🔼</button>
-                <span style="display: inline-block; width: 8px"></span>
-                <button class="action-btn" (click)="moveDown(i)">🔽</button>
-                <span style="display: inline-block; width: 8px"></span>
-                <button class="action-btn" (click)="deletePlace(i)">❌</button>
+                <div>
+                  <button class="action-btn" (click)="moveUp(i)">🔼</button>
+                  <span style="display: inline-block; width: 8px"></span>
+                  <button class="action-btn" (click)="moveDown(i)">🔽</button>
+                  <span style="display: inline-block; width: 8px"></span>
+                  <button class="action-btn" (click)="deletePlace(i)">
+                    ❌
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -310,11 +317,34 @@
     text-align: center;
   }
 
-  .input-trip-name {
-    min-width: 445px;
+  .row-combined {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
   }
 
-  .trip-section {
+  .step-position {
+    margin-bottom: 15px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    flex: 1; /*Make each step of trip take same space as the other steps on the current row*/
+    min-width: 220px;
+  }
+
+  .step-bubble {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+
+  .step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: relative;
   }
 
@@ -322,21 +352,14 @@
     margin-bottom: 10px;
   }
 
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-  }
-
-  .section-emoji {
+  .step-emoji {
     position: absolute;
     top: 12px;
     right: 12px;
     font-size: 1.5rem;
   }
 
-  .input-group.trip-section textarea {
+  textarea {
     resize: vertical;
     width: 100%;
     height: 100%;
@@ -362,24 +385,13 @@
     margin-top: 15px;
   }
 
-  .trip-section {
-    margin-bottom: 25px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  }
-
-  .first-trip-section {
-    margin-bottom: 10px;
-    border-radius: 12px;
-  }
-
   .emoji-picker {
     display: flex;
-    align-items: flex-start;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
     gap: 1rem;
     flex-wrap: wrap;
+    width: 100%;
   }
 
   .emoji-picker-wrapper {
@@ -387,6 +399,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* Center vertically if needed */
+    width: 100%;
   }
 
   .emoji-button.selected-display {
@@ -400,7 +414,7 @@
     border: 1px solid #ccc;
     border-radius: 10px;
     cursor: pointer;
-    width: 110px;
+    width: 210px;
     margin-top: 10px;
   }
 
@@ -464,25 +478,6 @@
     text-align: center;
   }
 
-  /* Layout Helpers */
-  .row-combined {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-
-  .row-combined .input-group {
-    flex: 1;
-    min-width: 220px;
-  }
-
-  .input-group {
-    margin-bottom: 15px;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-  }
-
   /* Inputs */
   input[type="text"],
   input[type="date"] {
@@ -525,7 +520,7 @@
 
   .field-row {
     display: flex;
-    gap: 6rem;
+    flex-grow: 1;
     align-items: flex-start;
   }
 
@@ -630,18 +625,6 @@
     display: none; /* Hide email column */
   }
 
-  /* Layout Helpers */
-  .row-combined {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-
-  .row-combined .input-group {
-    flex: 1;
-    min-width: 220px;
-  }
-
   .stops-subtitle {
     font-size: 1.2rem;
     color: #4b3f72;
@@ -737,15 +720,5 @@
     padding: 0 !important;
     background: none !important;
     border: none;
-  }
-  /* Media Query */
-  @media (max-width: 600px) {
-    .row-combined {
-      flex-direction: column;
-    }
-
-    .input-group {
-      width: 100%;
-    }
   }
 </style>
