@@ -2,6 +2,7 @@ package com.wanderstudio.services;
 
 import com.wanderstudio.dto.*;
 import com.wanderstudio.entities.User;
+import com.wanderstudio.errors.UsernameAlreadyExistsException;
 import com.wanderstudio.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,10 +31,16 @@ public class UserInfoService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
-    public String addUser(User userInfo) {
+    // In your UserInfoService class
+    public User addUser(User userInfo) {
+        // Check if the username is already taken
+        if (repository.existsByUsername(userInfo.getUsername())) {
+            // Throw an exception for the specific error
+            throw new UsernameAlreadyExistsException("Username '" + userInfo.getUsername() + "' is already taken.");
+        }
+
         // Encode password before saving the user
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
-        repository.save(userInfo);
-        return "User Added Successfully from UserInfoService";
+        return repository.save(userInfo); // Return the saved entity
     }
 }

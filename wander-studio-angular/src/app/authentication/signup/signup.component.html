@@ -10,23 +10,37 @@
       <div class="logo" style="user-select: none">
         <img src="logo.jpg" alt="Wander Studio Logo" />
       </div>
-
       <h1>Join <span class="app-name">Wander Studio</span></h1>
     </div>
 
-    <form (ngSubmit)="onSubmit()">
+    <!-- General Error Message Display from API -->
+    <div *ngIf="generalErrorMessage" class="alert alert-danger" role="alert">
+      {{ generalErrorMessage }}
+    </div>
+
+    <!-- Give the form a template reference variable #signupForm -->
+    <form #signupForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- USERNAME FIELD -->
       <div class="form-group">
         <label for="username">👤 Username:</label>
         <input
           id="username"
           [(ngModel)]="user.username"
           name="username"
+          #username="ngModel"
           required
           class="form-control"
-          style="max-width: 350px"
+          [class.is-invalid]="username.invalid && username.touched"
         />
+        <div
+          *ngIf="username.invalid && username.touched"
+          class="invalid-feedback"
+        >
+          <div *ngIf="username.errors?.['required']">Username is required.</div>
+        </div>
       </div>
 
+      <!-- EMAIL FIELD -->
       <div class="form-group">
         <label for="email">📧 Email:</label>
         <input
@@ -34,12 +48,21 @@
           [(ngModel)]="user.email"
           name="email"
           type="email"
+          #email="ngModel"
           required
+          email
           class="form-control"
-          style="max-width: 350px"
+          [class.is-invalid]="email.invalid && email.touched"
         />
+        <div *ngIf="email.invalid && email.touched" class="invalid-feedback">
+          <div *ngIf="email.errors?.['required']">Email is required.</div>
+          <div *ngIf="email.errors?.['email']">
+            Please enter a valid email address.
+          </div>
+        </div>
       </div>
 
+      <!-- PASSWORD FIELD -->
       <div class="form-group">
         <label for="password">🔒 Password:</label>
         <input
@@ -47,12 +70,24 @@
           [(ngModel)]="user.password"
           name="password"
           type="password"
+          #password="ngModel"
           required
+          minlength="6"
           class="form-control"
-          style="max-width: 350px"
+          [class.is-invalid]="password.invalid && password.touched"
         />
+        <div
+          *ngIf="password.invalid && password.touched"
+          class="invalid-feedback"
+        >
+          <div *ngIf="password.errors?.['required']">Password is required.</div>
+          <div *ngIf="password.errors?.['minlength']">
+            Password must be at least 6 characters long.
+          </div>
+        </div>
       </div>
 
+      <!-- GENDER FIELD -->
       <div class="form-group gender-radio-group">
         <label>👤 Gender:</label>
         <div class="radio-options">
@@ -62,11 +97,11 @@
               [(ngModel)]="user.gender"
               name="gender"
               value="M"
+              #gender="ngModel"
               required
             />
             👨 Male
           </label>
-
           <label class="radio-option">
             <input
               type="radio"
@@ -78,9 +113,19 @@
             👩 Female
           </label>
         </div>
+
+        <div
+          *ngIf="gender.invalid && signupForm.submitted"
+          class="invalid-feedback d-block"
+        >
+          Gender is required.
+        </div>
       </div>
 
-      <button type="submit" class="btn-login">🚀 Sign Up</button>
+      <!-- Disable button if the form is invalid -->
+      <button type="submit" class="btn-login" [disabled]="!signupForm.valid">
+        🚀 Sign Up
+      </button>
     </form>
 
     <p class="signup-text">Already have an account? 🎉</p>

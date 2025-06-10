@@ -2,6 +2,7 @@ package com.wanderstudio.controllers;
 
 import com.wanderstudio.dto.*;
 import com.wanderstudio.entities.User;
+import com.wanderstudio.errors.UsernameAlreadyExistsException;
 import com.wanderstudio.services.JwtService;
 import com.wanderstudio.services.UserInfoService;
 import com.wanderstudio.services.UserService;
@@ -72,23 +73,28 @@ public class AuthUserController {
     }
 
     @PostMapping("/addNewUser")
-    public ResponseEntity<Map<String, String>> addNewUser(@Valid @RequestBody AddNewUserRequest newUserDTO) {
-        User newUser = new User();
-        newUser.setUsername(newUserDTO.getUsername());
-        newUser.setEmail(newUserDTO.getEmail());
-        newUser.setGender(newUserDTO.getGender());
-        newUser.setPassword(newUserDTO.getPassword());
-        newUser.setRoles("ROLE_USER");
+    public ResponseEntity<ApiResponse<?>> addNewUser(@Valid @RequestBody AddNewUserRequest newUserDTO) {
+        try {
+            User newUser = new User();
+            newUser.setUsername(newUserDTO.getUsername());
+            newUser.setEmail(newUserDTO.getEmail());
+            newUser.setGender(newUserDTO.getGender());
+            newUser.setPassword(newUserDTO.getPassword());
+            newUser.setRoles("ROLE_USER");
 
-        String result = service.addUser(newUser);
+            User savedUser = service.addUser(newUser);
 
-        // Create a map to return as JSON response
-        Map<String, String> response = new HashMap<>();
-        response.put("message", result);
+            // Success response
+            ApiResponse<User> response = new ApiResponse<>(savedUser, "User added successfully");
+            // HTTP 201 Created is more semantic for creating a new resource
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (UsernameAlreadyExistsException ex) {
+            // Failure response for our specific business rule
+            ApiResponse<Object> response = new ApiResponse<>(null, ex.getMessage(), false);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
-
     @PostMapping("/generateToken")
     public ResponseEntity<ApiResponse<LoginResponse>> authenticateAndGetToken(
             @RequestBody AuthRequest authRequest,
